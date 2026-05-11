@@ -1,0 +1,47 @@
+{
+  "distance": "5k",
+  "total_km": 5,
+  "total_distance_m": 5033,
+  "segments": [
+    {
+      "km": 1,
+      "elevation_gain": 0,
+      "elevation_loss": 0.4,
+      "grade_pct": -0.7,
+      "ele_start": 720.2,
+      "ele_end": 713.2
+    },
+    {
+      "km": 2,
+      "elevation_gain": 0,
+      "elevation_loss": 1.2,
+      "grade_pct": -1.4,
+      "ele_start": 713.2,
+      "ele_end": 699.4
+    },
+    {
+      "km": 3,
+      "elevation_gain": 0.4,
+      "elevation_loss": 2.6,
+      "grade_pct": 0.4,
+      "ele_start": 699.2,
+      "ele_end": 703.4
+    },
+    {
+      "km": 4,
+      "elevation_gain": 0,
+      "elevation_loss": 0,
+      "grade_pct": 0.7,
+      "ele_start": 703.4,
+      "ele_end": 710.6
+    },
+    {
+      "km": 5,
+      "elevation_gain": 0,
+      "elevation_loss": 0,
+      "grade_pct": 0,
+      "ele_start": 710.6,
+      "ele_end": 710.4
+    }
+  ]
+}
