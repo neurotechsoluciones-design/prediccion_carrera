@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#050B15">
+  <title>Estrategia de Carrera · NeuroTech</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #9AFF5F;
+      --bg1: #050B15;
+      --bg2: #0A1A2F;
+      --text: #FFFFFF;
+      --muted: #A1A1AA;
+      --orange: #F97316;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg1);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ── Top accent line ── */
+    .accent-line {
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--green), transparent);
+      opacity: 0.5;
+    }
+
+    /* ── Screens ── */
+    #screen-form { min-height: 100vh; display: flex; flex-direction: column; }
+    #screen-results { min-height: 100vh; }
+    .hidden { display: none !important; }
+
+    /* ── Form layout ── */
+    .form-inner {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 28px 24px 24px;
+      max-width: 400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* ── NeuroTech badge ── */
+    .nt-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .nt-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    .nt-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.4em;
+      color: var(--green);
+      text-transform: uppercase;
+    }
+
+    /* ── Headings ── */
+    .h-main {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 2rem;
+      line-height: 1.1;
+      color: var(--text);
+    }
+    .h-sub {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 10px;
+    }
+
+    /* ── Form section label ── */
+    .field-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    /* ── Distance buttons ── */
+    .dist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .dist-btn {
+      background: var(--bg2);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 14px;
+      padding: 20px 0;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 1.6rem;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      -webkit-appearance: none;
+    }
+    .dist-btn:active { transform: scale(0.97); }
+    .dist-btn.selected {
+      background: rgba(154, 255, 95, 0.08);
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    /* ── Time input ── */
+    .time-input {
+      width: 100%;
+      background: var(--bg2);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 14px;
+      padding: 18px 20px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.6rem;
+      color: var(--text);
+      text-align: center;
+      caret-color: var(--green);
+      letter-spacing: 0.05em;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+    }
+    .time-input::placeholder { color: rgba(255,255,255,0.15); }
+    .time-input:focus { outline: none; border-color: var(--green); }
+    .time-hint {
+      font-size: 11px;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    /* ── CTA button ── */
+    .btn-cta {
+      width: 100%;
+      background: var(--green);
+      color: var(--bg1);
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 0.78rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 14px;
+      padding: 20px 0;
+      cursor: pointer;
+      transition: all 0.2s;
+      -webkit-appearance: none;
+    }
+    .btn-cta:hover { filter: brightness(1.1); }
+    .btn-cta:active { transform: scale(0.98); }
+    .btn-cta:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── Error ── */
+    .error-msg {
+      color: #F87171;
+      font-size: 0.8rem;
+      text-align: center;
+      min-height: 20px;
+    }
+
+    /* ── Results layout ── */
+    .results-inner {
+      padding: 20px 16px 40px;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    /* ── Back button ── */
+    .back-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 8px;
+      margin: -8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      transition: color 0.2s;
+    }
+    .back-btn:hover { color: var(--text); }
+
+    /* ── Summary cards ── */
+    .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+    .summary-card {
+      background: var(--bg2);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 16px;
+    }
+    .summary-card-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 8px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .summary-card-value {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: 1.6rem;
+      line-height: 1;
+    }
+    .summary-card-unit { font-size: 10px; color: var(--muted); margin-top: 4px; }
+
+    /* ── Elevation profile ── */
+    .elev-wrap {
+      background: var(--bg2);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px;
+      padding: 16px 16px 10px;
+      margin-bottom: 16px;
+    }
+    .elev-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 8px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .elev-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      height: 50px;
+    }
+
+    /* ── Table header ── */
+    .table-header {
+      display: grid;
+      grid-template-columns: 36px 1fr 90px 64px;
+      gap: 4px;
+      padding: 0 12px;
+      margin-bottom: 6px;
+    }
+    .table-header div {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 8px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .table-header div:last-child { text-align: right; }
+
+    /* ── Result rows ── */
+    #results-table { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
+
+    /* ── Tip box ── */
+    .tip-box {
+      background: var(--bg2);
+      border: 1px solid rgba(154, 255, 95, 0.18);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 28px;
+      font-size: 0.82rem;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    /* ── Social block ── */
+    .social-row {
+      display: flex;
+      justify-content: center;
+      gap: 36px;
+      margin-bottom: 24px;
+    }
+    .social-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: transform 0.2s;
+    }
+    .social-link:hover { transform: translateY(-4px); }
+    .social-link img { width: 32px; height: 32px; }
+    .social-link span {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 8px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+    .social-link.wa:hover span { color: var(--green); }
+    .social-link.ig:hover span { color: #E1306C; }
+    .social-link.yt:hover span { color: #FF0000; }
+
+    /* ── Footer ── */
+    .footer-info {
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding-top: 20px;
+      text-align: center;
+      font-size: 10px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    /* ── Separator spacing ── */
+    .field-group { margin-bottom: 24px; }
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══════════════════════════════════════════
+       SCREEN: FORM
+  ═══════════════════════════════════════════ -->
+  <div id="screen-form">
+    <div class="accent-line"></div>
+
+    <div class="form-inner">
+
+      <!-- Header -->
+      <div>
+        <div class="nt-badge">
+          <div class="nt-dot"></div>
+          <span class="nt-label">NeuroTech</span>
+          <div class="nt-dot"></div>
+        </div>
+        <h1 class="h-main">Estrategia<br>de Carrera</h1>
+        <p class="h-sub">Carrera Héroes de Malvinas · San Rafael</p>
+      </div>
+
+      <!-- Form fields -->
+      <div style="margin: 32px 0; display: flex; flex-direction: column; gap: 24px;">
+
+        <!-- Distancia -->
+        <div>
+          <label class="field-label">Distancia</label>
+          <div class="dist-grid">
+            <button id="btn-5k" class="dist-btn" onclick="selectDistance('5k')">5K</button>
+            <button id="btn-10k" class="dist-btn" onclick="selectDistance('10k')">10K</button>
+          </div>
+        </div>
+
+        <!-- Tiempo -->
+        <div>
+          <label class="field-label">Tiempo objetivo</label>
+          <input id="time-input" class="time-input" type="text" inputmode="decimal"
+            placeholder="25:00" autocomplete="off" spellcheck="false">
+          <p class="time-hint">MM:SS &nbsp;·&nbsp; H:MM:SS</p>
+        </div>
+
+        <!-- CTA -->
+        <button id="btn-calc" class="btn-cta" onclick="calculate()">
+          Calcular Estrategia
+        </button>
+
+        <!-- Error -->
+        <p id="error-msg" class="error-msg hidden"></p>
+
+      </div>
+
+      <!-- Footer note -->
+      <p style="font-size:10px;color:rgba(161,161,170,0.5);text-align:center">
+        Estrategia orientativa · No reemplaza entrenamiento profesional
+      </p>
+
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════
+       SCREEN: RESULTS
+  ═══════════════════════════════════════════ -->
+  <div id="screen-results" class="hidden">
+    <div class="accent-line"></div>
+
+    <div class="results-inner">
+
+      <!-- Back + title -->
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+        <button class="back-btn" onclick="showForm()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          Volver
+        </button>
+        <div style="border-left:1px solid rgba(255,255,255,0.1);padding-left:12px">
+          <div style="font-family:'Orbitron',sans-serif;font-size:8px;letter-spacing:0.4em;color:#9AFF5F;text-transform:uppercase">Estrategia</div>
+          <div id="result-title" style="font-family:'Orbitron',sans-serif;font-weight:700;font-size:1.1rem;color:#fff">5K · 25:00</div>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="summary-card-label">Ritmo base</div>
+          <div class="summary-card-value" id="pace-base" style="color:#fff">5:00</div>
+          <div class="summary-card-unit">/km promedio</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-label">Objetivo</div>
+          <div class="summary-card-value" id="time-total" style="color:#9AFF5F">25:00</div>
+          <div class="summary-card-unit">tiempo total</div>
+        </div>
+      </div>
+
+      <!-- Elevation profile -->
+      <div class="elev-wrap">
+        <div class="elev-label">Perfil de elevación</div>
+        <div class="elev-bars" id="elev-profile"></div>
+      </div>
+
+      <!-- Table header -->
+      <div class="table-header">
+        <div>KM</div>
+        <div>TRAMO</div>
+        <div>RITMO</div>
+        <div style="text-align:right">ACUM.</div>
+      </div>
+
+      <!-- Table rows -->
+      <div id="results-table"></div>
+
+      <!-- Tip -->
+      <div class="tip-box">
+        <p id="tip-text"></p>
+      </div>
+
+      <!-- Social block -->
+      <div class="social-row">
+        <a class="social-link wa" href="https://wa.me/5492604087086?text=Hola%20NeuroTech!%20Us%C3%A9%20la%20app%20de%20estrategia%20de%20carrera." target="_blank" rel="noopener">
+          <img src="https://img.icons8.com/color/96/whatsapp--v1.png" alt="WhatsApp">
+          <span>WhatsApp</span>
+        </a>
+        <a class="social-link ig" href="https://www.instagram.com/neurotech.soluciones/" target="_blank" rel="noopener">
+          <img src="https://img.icons8.com/color/96/instagram-new--v1.png" alt="Instagram">
+          <span>Instagram</span>
+        </a>
+        <a class="social-link yt" href="https://www.youtube.com/@neurotech-soluciones" target="_blank" rel="noopener">
+          <img src="https://img.icons8.com/color/96/youtube-play.png" alt="YouTube">
+          <span>YouTube</span>
+        </a>
+      </div>
+
+      <div class="footer-info">
+        <p>📧 info@neurotechsoluciones.com</p>
+        <p style="color:rgba(161,161,170,0.6);margin-top:4px">
+          <strong>NeuroTech Cursos y Capacitaciones · San Rafael, Mendoza</strong>
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
