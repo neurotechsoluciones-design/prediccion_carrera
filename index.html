@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#050B15">
-  <title>Estrategia de Carrera · NeuroTech</title>
+  <title>Estrategia de Ritmo · NeuroTech</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,83 +19,435 @@
       --bg2: #0A1A2F;
       --text: #FFFFFF;
       --muted: #A1A1AA;
-      --orange: #F97316;
+      --border: rgba(255,255,255,0.08);
+      --glass: rgba(8,20,40,0.55);
     }
 
     html { scroll-behavior: smooth; }
 
     body {
+      font-family: 'Inter', sans-serif;
       background: var(--bg1);
       color: var(--text);
-      font-family: 'Inter', sans-serif;
       min-height: 100vh;
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* ── Top accent line ── */
-    .accent-line {
+    .screen { min-height: 100vh; }
+    .hidden { display: none !important; }
+
+    /* ── Shared: accent top line ── */
+    .gline {
       height: 1px;
       background: linear-gradient(to right, transparent, var(--green), transparent);
       opacity: 0.5;
+      box-shadow: 0 0 12px rgba(154,255,95,0.5);
     }
 
-    /* ── Screens ── */
-    #screen-form { min-height: 100vh; display: flex; flex-direction: column; }
-    #screen-results { min-height: 100vh; }
-    .hidden { display: none !important; }
+    /* ── Shared: back button ── */
+    .back-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      padding: 8px 0;
+      transition: color 0.2s;
+    }
+    .back-btn:hover { color: var(--text); }
+    .back-btn svg { transition: transform 0.2s; }
+    .back-btn:hover svg { transform: translateX(-2px); }
 
-    /* ── Form layout ── */
-    .form-inner {
+    /* ── Shared: buttons ── */
+    .btn-neon {
+      width: 100%;
+      background: var(--green);
+      color: var(--bg1);
+      border: none;
+      border-radius: 14px;
+      padding: 17px 20px;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 0 24px rgba(154,255,95,0.4), 0 0 48px rgba(154,255,95,0.1);
+      transition: all 0.2s;
+    }
+    .btn-neon:hover { filter: brightness(1.08); box-shadow: 0 0 36px rgba(154,255,95,0.55), 0 0 72px rgba(154,255,95,0.15); transform: translateY(-1px); }
+    .btn-neon:active { transform: scale(0.98); }
+    .btn-neon:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .btn-ghost {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      color: rgba(255,255,255,0.7);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      padding: 17px 20px;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 600;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.18); color: white; }
+
+    /* ══════════════════════════════════════════
+       LANDING
+    ══════════════════════════════════════════ */
+    #screen-landing {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      background:
+        linear-gradient(to bottom, rgba(5,11,21,0.82) 0%, rgba(5,11,21,0.6) 45%, rgba(5,11,21,0.92) 100%),
+        url('https://raw.githubusercontent.com/neurotechsoluciones-design/neurotech-assets/main/running.png')
+        center top / cover no-repeat;
+    }
+
+    .landing-inner {
       flex: 1;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      padding: 28px 24px 24px;
-      max-width: 400px;
+      padding: 40px 24px 32px;
+      max-width: 420px;
       margin: 0 auto;
       width: 100%;
     }
 
-    /* ── NeuroTech badge ── */
-    .nt-badge {
+    .logo-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+    .logo-wrap img {
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+      border-radius: 14px;
+      filter: drop-shadow(0 0 16px rgba(154,255,95,0.25));
+    }
+
+    .landing-title {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 1.75rem;
+      line-height: 1.15;
+      color: white;
+      text-align: center;
+      letter-spacing: -0.01em;
+      margin-bottom: 10px;
+    }
+    .landing-title span { color: var(--green); }
+
+    .landing-sub {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.5;
+      margin-bottom: 36px;
+    }
+
+    /* Glassmorphism mode cards */
+    .mode-cards { display: flex; flex-direction: column; gap: 14px; }
+
+    .mode-card {
+      background: var(--glass);
+      backdrop-filter: blur(24px) saturate(160%);
+      -webkit-backdrop-filter: blur(24px) saturate(160%);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 22px 20px 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      text-align: left;
+      width: 100%;
+    }
+    .mode-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .mode-card.a-card {
+      border-color: rgba(154,255,95,0.2);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(154,255,95,0.06), inset 0 1px 0 rgba(154,255,95,0.08);
+    }
+    .mode-card.a-card:hover {
+      border-color: rgba(154,255,95,0.4);
+      box-shadow: 0 24px 72px rgba(0,0,0,0.55), 0 0 48px rgba(154,255,95,0.12), inset 0 1px 0 rgba(154,255,95,0.12);
+      transform: translateY(-3px);
+    }
+    .mode-card.b-card {
+      box-shadow: 0 16px 48px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+    .mode-card.b-card:hover {
+      border-color: rgba(255,255,255,0.16);
+      box-shadow: 0 20px 56px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.07);
+      transform: translateY(-3px);
+    }
+
+    .card-tag {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 8px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .a-card .card-tag { color: var(--green); }
+    .b-card .card-tag { color: var(--muted); }
+
+    .card-tag-line { flex: 1; height: 1px; }
+    .a-card .card-tag-line { background: linear-gradient(to right, rgba(154,255,95,0.4), transparent); }
+    .b-card .card-tag-line { background: linear-gradient(to right, rgba(255,255,255,0.1), transparent); }
+
+    .card-name {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 1.3rem;
+      color: white;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .card-claim {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.5;
+      margin-bottom: 4px;
+    }
+
+    .card-detail {
+      font-size: 0.75rem;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+
+    .card-cta {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 20px;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: 0.65rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      padding: 12px 18px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
     }
-    .nt-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
+    .a-card .card-cta {
       background: var(--green);
-      animation: pulse 2s infinite;
+      color: var(--bg1);
+      box-shadow: 0 0 20px rgba(154,255,95,0.35);
     }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
+    .a-card .card-cta:hover { box-shadow: 0 0 32px rgba(154,255,95,0.55); }
+    .b-card .card-cta {
+      background: rgba(255,255,255,0.07);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.12);
     }
-    .nt-label {
+    .b-card .card-cta:hover { background: rgba(255,255,255,0.11); }
+
+    .landing-footer {
+      text-align: center;
+      font-size: 10px;
+      color: rgba(161,161,170,0.45);
+      padding: 24px 24px 20px;
+      max-width: 420px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ══════════════════════════════════════════
+       GUIARME (questionnaire)
+    ══════════════════════════════════════════ */
+    #screen-guiarme { background: var(--bg1); }
+
+    .g-inner {
+      padding: 24px 20px 40px;
+      max-width: 420px;
+      margin: 0 auto;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .g-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+
+    .g-step-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.35em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .g-progress-bg {
+      height: 2px;
+      background: rgba(255,255,255,0.07);
+      border-radius: 2px;
+      margin-bottom: 36px;
+      overflow: hidden;
+    }
+    .g-progress-fill {
+      height: 100%;
+      background: linear-gradient(to right, var(--green), rgba(154,255,95,0.5));
+      border-radius: 2px;
+      transition: width 0.4s ease;
+      box-shadow: 0 0 8px rgba(154,255,95,0.55);
+    }
+
+    .g-question {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      line-height: 1.35;
+      color: white;
+      margin-bottom: 28px;
+    }
+
+    .g-opts { display: flex; flex-direction: column; gap: 10px; }
+
+    .g-opt {
+      width: 100%;
+      background: rgba(10,26,47,0.5);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 18px 20px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s;
+      -webkit-appearance: none;
+    }
+    .g-opt:hover {
+      border-color: rgba(154,255,95,0.35);
+      background: rgba(154,255,95,0.05);
+      box-shadow: 0 0 20px rgba(154,255,95,0.08);
+    }
+    .g-opt:active { transform: scale(0.99); }
+    .g-opt-main {
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: white;
+      margin-bottom: 4px;
+    }
+    .g-opt-sub { font-size: 0.75rem; color: var(--muted); }
+
+    /* Recommendation result (step 5) */
+    .g-result { flex: 1; display: flex; flex-direction: column; }
+
+    .g-result-tag {
       font-family: 'Orbitron', sans-serif;
       font-size: 9px;
       letter-spacing: 0.4em;
       color: var(--green);
       text-transform: uppercase;
+      margin-bottom: 6px;
     }
-
-    /* ── Headings ── */
-    .h-main {
+    .g-result-title {
       font-family: 'Orbitron', sans-serif;
       font-weight: 900;
-      font-size: 2rem;
-      line-height: 1.1;
-      color: var(--text);
-    }
-    .h-sub {
-      font-size: 0.85rem;
-      color: var(--muted);
-      margin-top: 10px;
+      font-size: 1.4rem;
+      color: white;
+      margin-bottom: 28px;
     }
 
-    /* ── Form section label ── */
+    .g-pace-card {
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(154,255,95,0.2);
+      border-radius: 20px;
+      padding: 28px 20px;
+      text-align: center;
+      margin-bottom: 20px;
+      box-shadow: 0 0 40px rgba(154,255,95,0.08), 0 16px 48px rgba(0,0,0,0.4);
+    }
+    .g-pace-label { font-family: 'Orbitron', sans-serif; font-size: 9px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .g-pace-value {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 3.2rem;
+      color: var(--green);
+      line-height: 1;
+      text-shadow: 0 0 30px rgba(154,255,95,0.45);
+      margin-bottom: 4px;
+    }
+    .g-pace-unit { font-size: 0.75rem; color: var(--muted); margin-bottom: 20px; }
+
+    .g-time-row { display: flex; justify-content: center; gap: 32px; }
+    .g-time-item { text-align: center; }
+    .g-time-label { font-family: 'Orbitron', sans-serif; font-size: 8px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+    .g-time-value { font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 1.2rem; color: white; }
+
+    .g-message {
+      background: rgba(10,26,47,0.6);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px 20px;
+      font-size: 0.83rem;
+      line-height: 1.65;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+
+    .g-result-actions { display: flex; flex-direction: column; gap: 10px; margin-top: auto; }
+
+    /* ══════════════════════════════════════════
+       RITMO OBJETIVO (form)
+    ══════════════════════════════════════════ */
+    #screen-form { background: var(--bg1); }
+
+    .form-inner {
+      padding: 24px 20px 40px;
+      max-width: 420px;
+      margin: 0 auto;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-header { margin-bottom: 32px; }
+
+    .form-tag {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .form-title {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 1.35rem;
+      color: white;
+      line-height: 1.2;
+    }
+
     .field-label {
       font-family: 'Orbitron', sans-serif;
       font-size: 9px;
@@ -106,348 +458,408 @@
       margin-bottom: 10px;
     }
 
-    /* ── Distance buttons ── */
-    .dist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .dist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
     .dist-btn {
       background: var(--bg2);
-      border: 1px solid rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.1);
       border-radius: 14px;
       padding: 20px 0;
       font-family: 'Orbitron', sans-serif;
       font-weight: 900;
-      font-size: 1.6rem;
+      font-size: 1.5rem;
       color: var(--muted);
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.2s;
       -webkit-appearance: none;
     }
     .dist-btn:active { transform: scale(0.97); }
     .dist-btn.selected {
-      background: rgba(154, 255, 95, 0.08);
+      background: rgba(154,255,95,0.07);
       border-color: var(--green);
       color: var(--green);
+      box-shadow: 0 0 20px rgba(154,255,95,0.12);
     }
 
-    /* ── Time input ── */
     .time-input {
       width: 100%;
       background: var(--bg2);
-      border: 1px solid rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.1);
       border-radius: 14px;
       padding: 18px 20px;
       font-family: 'Orbitron', sans-serif;
-      font-size: 1.6rem;
-      color: var(--text);
+      font-size: 1.5rem;
+      color: white;
       text-align: center;
       caret-color: var(--green);
       letter-spacing: 0.05em;
       transition: border-color 0.2s;
       -webkit-appearance: none;
+      margin-bottom: 8px;
     }
     .time-input::placeholder { color: rgba(255,255,255,0.15); }
-    .time-input:focus { outline: none; border-color: var(--green); }
-    .time-hint {
-      font-size: 11px;
-      color: var(--muted);
+    .time-input:focus { outline: none; border-color: var(--green); box-shadow: 0 0 16px rgba(154,255,95,0.1); }
+    .time-hint { font-size: 11px; color: var(--muted); text-align: center; margin-bottom: 24px; }
+
+    .error-msg { color: #F87171; font-size: 0.8rem; text-align: center; min-height: 20px; }
+
+    .form-footer-note {
+      margin-top: auto;
+      padding-top: 24px;
       text-align: center;
-      margin-top: 8px;
+      font-size: 10px;
+      color: rgba(161,161,170,0.4);
     }
 
-    /* ── CTA button ── */
-    .btn-cta {
-      width: 100%;
-      background: var(--green);
-      color: var(--bg1);
-      font-family: 'Orbitron', sans-serif;
-      font-weight: 900;
-      font-size: 0.78rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      border: none;
-      border-radius: 14px;
-      padding: 20px 0;
-      cursor: pointer;
-      transition: all 0.2s;
-      -webkit-appearance: none;
-    }
-    .btn-cta:hover { filter: brightness(1.1); }
-    .btn-cta:active { transform: scale(0.98); }
-    .btn-cta:disabled { opacity: 0.5; cursor: not-allowed; }
+    /* ══════════════════════════════════════════
+       RESULTS
+    ══════════════════════════════════════════ */
+    #screen-results { background: var(--bg1); }
 
-    /* ── Error ── */
-    .error-msg {
-      color: #F87171;
-      font-size: 0.8rem;
-      text-align: center;
-      min-height: 20px;
-    }
-
-    /* ── Results layout ── */
     .results-inner {
       padding: 20px 16px 40px;
       max-width: 420px;
       margin: 0 auto;
     }
 
-    /* ── Back button ── */
-    .back-btn {
-      background: none;
-      border: none;
-      color: var(--muted);
-      cursor: pointer;
-      padding: 8px;
-      margin: -8px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.8rem;
-      transition: color 0.2s;
-    }
-    .back-btn:hover { color: var(--text); }
+    .results-top { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+    .results-id { border-left: 1px solid rgba(255,255,255,0.1); padding-left: 12px; }
+    .results-mode { font-family: 'Orbitron', sans-serif; font-size: 8px; letter-spacing: 0.4em; color: var(--green); text-transform: uppercase; margin-bottom: 2px; }
+    .results-name { font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 1.1rem; color: white; }
 
-    /* ── Summary cards ── */
     .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
     .summary-card {
       background: var(--bg2);
-      border: 1px solid rgba(255,255,255,0.08);
+      border: 1px solid var(--border);
       border-radius: 14px;
       padding: 16px;
     }
-    .summary-card-label {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 8px;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 6px;
-    }
-    .summary-card-value {
-      font-family: 'Orbitron', sans-serif;
-      font-weight: 700;
-      font-size: 1.6rem;
-      line-height: 1;
-    }
-    .summary-card-unit { font-size: 10px; color: var(--muted); margin-top: 4px; }
+    .summary-label { font-family: 'Orbitron', sans-serif; font-size: 8px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+    .summary-value { font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 1.55rem; line-height: 1; }
+    .summary-unit { font-size: 10px; color: var(--muted); margin-top: 4px; }
 
-    /* ── Elevation profile ── */
-    .elev-wrap {
-      background: var(--bg2);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 14px;
-      padding: 16px 16px 10px;
-      margin-bottom: 16px;
-    }
-    .elev-label {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 8px;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 10px;
-    }
-    .elev-bars {
-      display: flex;
-      align-items: flex-end;
-      gap: 4px;
-      height: 50px;
-    }
+    .elev-wrap { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 14px 14px 10px; margin-bottom: 16px; }
+    .elev-label { font-family: 'Orbitron', sans-serif; font-size: 8px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+    .elev-bars { display: flex; align-items: flex-end; gap: 4px; height: 48px; }
 
-    /* ── Table header ── */
-    .table-header {
-      display: grid;
-      grid-template-columns: 36px 1fr 90px 64px;
-      gap: 4px;
-      padding: 0 12px;
-      margin-bottom: 6px;
-    }
-    .table-header div {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 8px;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
+    .table-header { display: grid; grid-template-columns: 36px 1fr 90px 64px; gap: 4px; padding: 0 12px; margin-bottom: 6px; }
+    .table-header div { font-family: 'Orbitron', sans-serif; font-size: 8px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted); }
     .table-header div:last-child { text-align: right; }
 
-    /* ── Result rows ── */
     #results-table { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
 
-    /* ── Tip box ── */
-    .tip-box {
-      background: var(--bg2);
-      border: 1px solid rgba(154, 255, 95, 0.18);
-      border-radius: 14px;
-      padding: 16px;
-      margin-bottom: 28px;
-      font-size: 0.82rem;
-      line-height: 1.6;
-      color: var(--muted);
-    }
+    .tip-box { background: var(--bg2); border: 1px solid rgba(154,255,95,0.15); border-radius: 14px; padding: 16px; margin-bottom: 16px; font-size: 0.82rem; line-height: 1.65; color: var(--muted); }
 
-    /* ── Social block ── */
-    .social-row {
+    /* Methodology note */
+    .method-note {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 28px;
       display: flex;
-      justify-content: center;
-      gap: 36px;
-      margin-bottom: 24px;
+      gap: 10px;
+      align-items: flex-start;
     }
-    .social-link {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      text-decoration: none;
-      transition: transform 0.2s;
-    }
+    .method-icon { flex-shrink: 0; margin-top: 1px; }
+    .method-icon svg { width: 14px; height: 14px; stroke: var(--muted); }
+    .method-text { font-size: 10px; line-height: 1.6; color: rgba(161,161,170,0.6); }
+
+    /* Social block */
+    .social-row { display: flex; justify-content: center; gap: 36px; margin-bottom: 20px; }
+    .social-link { display: flex; flex-direction: column; align-items: center; gap: 6px; text-decoration: none; transition: transform 0.2s; }
     .social-link:hover { transform: translateY(-4px); }
-    .social-link img { width: 32px; height: 32px; }
-    .social-link span {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 8px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--muted);
-      transition: color 0.2s;
-    }
-    .social-link.wa:hover span { color: var(--green); }
+    .social-link img { width: 30px; height: 30px; }
+    .social-link span { font-family: 'Orbitron', sans-serif; font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); transition: color 0.2s; }
+    .social-link.wa:hover span { color: #25D366; }
     .social-link.ig:hover span { color: #E1306C; }
     .social-link.yt:hover span { color: #FF0000; }
 
-    /* ── Footer ── */
-    .footer-info {
-      border-top: 1px solid rgba(255,255,255,0.05);
-      padding-top: 20px;
-      text-align: center;
-      font-size: 10px;
-      color: var(--muted);
-      line-height: 1.8;
-    }
-
-    /* ── Separator spacing ── */
-    .field-group { margin-bottom: 24px; }
+    .results-footer { border-top: 1px solid rgba(255,255,255,0.05); padding-top: 18px; text-align: center; font-size: 10px; color: var(--muted); line-height: 1.8; }
   </style>
 </head>
 
 <body>
 
-  <!-- ═══════════════════════════════════════════
-       SCREEN: FORM
-  ═══════════════════════════════════════════ -->
-  <div id="screen-form">
-    <div class="accent-line"></div>
+  <!-- ══════════════════════════════════════════
+       SCREEN: LANDING
+  ══════════════════════════════════════════ -->
+  <div id="screen-landing" class="screen">
+    <div class="gline"></div>
 
-    <div class="form-inner">
+    <div class="landing-inner">
 
-      <!-- Header -->
-      <div>
-        <div class="nt-badge">
-          <div class="nt-dot"></div>
-          <span class="nt-label">NeuroTech</span>
-          <div class="nt-dot"></div>
-        </div>
-        <h1 class="h-main">Estrategia<br>de Carrera</h1>
-        <p class="h-sub">Carrera Héroes de Malvinas · San Rafael</p>
+      <!-- Logo -->
+      <div class="logo-wrap">
+        <img src="https://raw.githubusercontent.com/neurotechsoluciones-design/neurotech-assets/main/logo_%20Neurotech_soluciones.png" alt="NeuroTech">
       </div>
 
-      <!-- Form fields -->
-      <div style="margin: 32px 0; display: flex; flex-direction: column; gap: 24px;">
+      <!-- Title -->
+      <h1 class="landing-title">Estrategia<br>de <span>Ritmo</span></h1>
+      <p class="landing-sub">Elegí cómo querés planificar tu carrera.</p>
 
-        <!-- Distancia -->
-        <div>
-          <label class="field-label">Distancia</label>
-          <div class="dist-grid">
-            <button id="btn-5k" class="dist-btn" onclick="selectDistance('5k')">5K</button>
-            <button id="btn-10k" class="dist-btn" onclick="selectDistance('10k')">10K</button>
+      <!-- Mode cards -->
+      <div class="mode-cards">
+
+        <!-- A: GUIARME -->
+        <div class="mode-card a-card" onclick="startGuiarme()">
+          <div class="card-tag">
+            Orientación
+            <div class="card-tag-line"></div>
+          </div>
+          <div class="card-name">Guiarme</div>
+          <p class="card-claim">No sé qué ritmo elegir.</p>
+          <p class="card-detail">Quiero correr bien, regular el esfuerzo y llegar con energía. Tres preguntas y armamos tu plan.</p>
+          <button class="card-cta">
+            Armar mi plan
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+
+        <!-- B: RITMO OBJETIVO -->
+        <div class="mode-card b-card" onclick="startRitmo()">
+          <div class="card-tag">
+            Marca objetivo
+            <div class="card-tag-line"></div>
+          </div>
+          <div class="card-name">Ritmo Objetivo</div>
+          <p class="card-claim">Tengo una marca en mente.</p>
+          <p class="card-detail">Calculá parciales km a km según distancia, desnivel real del recorrido y ritmo esperado.</p>
+          <button class="card-cta">
+            Calcular estrategia
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <p class="landing-footer">Herramienta orientativa. No reemplaza evaluación médica ni entrenamiento profesional.</p>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════
+       SCREEN: GUIARME (questionnaire)
+  ══════════════════════════════════════════ -->
+  <div id="screen-guiarme" class="screen hidden">
+    <div class="gline"></div>
+
+    <div class="g-inner">
+
+      <!-- Header + progress -->
+      <div class="g-header">
+        <button class="back-btn" onclick="guiarmeBack()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Volver
+        </button>
+        <span class="g-step-label" id="g-step-label">1 / 4</span>
+      </div>
+      <div class="g-progress-bg">
+        <div class="g-progress-fill" id="g-progress" style="width:25%"></div>
+      </div>
+
+      <!-- ── Step 1: Distancia ── -->
+      <div class="g-step" data-step="1">
+        <div class="g-question">¿Qué distancia vas a correr hoy?</div>
+        <div class="g-opts">
+          <button class="g-opt" onclick="guiarmeAnswer('distance','5k',2)">
+            <div class="g-opt-main">5 kilómetros</div>
+            <div class="g-opt-sub">Carrera corta de alta intensidad</div>
+          </button>
+          <button class="g-opt" onclick="guiarmeAnswer('distance','10k',2)">
+            <div class="g-opt-main">10 kilómetros</div>
+            <div class="g-opt-sub">Carrera de fondo, mayor exigencia</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── Step 2: Entrenamiento ── -->
+      <div class="g-step hidden" data-step="2">
+        <div class="g-question">¿Cómo describirías tu actividad física reciente?</div>
+        <div class="g-opts">
+          <button class="g-opt" onclick="guiarmeAnswer('frequency','high',3)">
+            <div class="g-opt-main">Entreno varias veces por semana</div>
+            <div class="g-opt-sub">Correr o actividad física es parte de mi rutina</div>
+          </button>
+          <button class="g-opt" onclick="guiarmeAnswer('frequency','moderate',3)">
+            <div class="g-opt-main">Una o dos veces por semana</div>
+            <div class="g-opt-sub">Activo pero sin un plan estructurado</div>
+          </button>
+          <button class="g-opt" onclick="guiarmeAnswer('frequency','low',3)">
+            <div class="g-opt-main">Poco y nada últimamente</div>
+            <div class="g-opt-sub">Pero acá estoy, y eso es lo que importa</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── Step 3: Distancia reciente ── -->
+      <div class="g-step hidden" data-step="3">
+        <div class="g-question" id="g-familiarity-q">¿Cuánto fue lo más largo que corriste recientemente?</div>
+        <div class="g-opts">
+          <button class="g-opt g-fam-opt" onclick="guiarmeAnswer('familiarity','above',4)">
+            <div class="g-opt-main">Más de la distancia de hoy</div>
+            <div class="g-opt-sub">Corrí más de eso sin parar</div>
+          </button>
+          <button class="g-opt g-fam-opt" onclick="guiarmeAnswer('familiarity','same',4)">
+            <div class="g-opt-main">Distancia similar</div>
+            <div class="g-opt-sub">Más o menos lo mismo, con alguna pausa</div>
+          </button>
+          <button class="g-opt g-fam-opt" onclick="guiarmeAnswer('familiarity','below',4)">
+            <div class="g-opt-main">Menos que la distancia de hoy</div>
+            <div class="g-opt-sub">O es mi primera vez a esta distancia</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── Step 4: Objetivo del día ── -->
+      <div class="g-step hidden" data-step="4">
+        <div class="g-question">¿Cuál es tu prioridad hoy?</div>
+        <div class="g-opts">
+          <button class="g-opt" onclick="guiarmeAnswer('goal','noWalk',0)">
+            <div class="g-opt-main">Terminar corriendo todo</div>
+            <div class="g-opt-sub">Sin caminar, de principio a fin</div>
+          </button>
+          <button class="g-opt" onclick="guiarmeAnswer('goal','finish',0)">
+            <div class="g-opt-main">Terminar bien aunque camine</div>
+            <div class="g-opt-sub">Llegar en buenas condiciones es lo que cuenta</div>
+          </button>
+          <button class="g-opt" onclick="guiarmeAnswer('goal','walk',0)">
+            <div class="g-opt-main">Disfrutar y llegar</div>
+            <div class="g-opt-sub">Sin importar el tiempo, quiero vivirlo</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── Step 5: Resultado ── -->
+      <div class="g-step hidden" data-step="5">
+        <div class="g-result">
+          <div class="g-result-tag">Plan listo</div>
+          <div class="g-result-title">Tu ritmo sugerido</div>
+
+          <div class="g-pace-card">
+            <div class="g-pace-label">Ritmo recomendado</div>
+            <div class="g-pace-value" id="g-pace-value">6:30</div>
+            <div class="g-pace-unit">min / km</div>
+            <div class="g-time-row">
+              <div class="g-time-item">
+                <div class="g-time-label">Distancia</div>
+                <div class="g-time-value" id="g-dist-value">5K</div>
+              </div>
+              <div class="g-time-item">
+                <div class="g-time-label">Tiempo estimado</div>
+                <div class="g-time-value" id="g-total-value">32:30</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="g-message" id="g-message">
+            A este ritmo, la carrera es completamente manejable.
+          </div>
+
+          <div class="g-result-actions">
+            <button class="btn-neon" onclick="goToGuiarmeStrategy()">Ver estrategia km a km</button>
+            <button class="btn-ghost" onclick="showGuiarmeStep(1)">Cambiar mis respuestas</button>
           </div>
         </div>
-
-        <!-- Tiempo -->
-        <div>
-          <label class="field-label">Tiempo objetivo</label>
-          <input id="time-input" class="time-input" type="text" inputmode="decimal"
-            placeholder="25:00" autocomplete="off" spellcheck="false">
-          <p class="time-hint">MM:SS &nbsp;·&nbsp; H:MM:SS</p>
-        </div>
-
-        <!-- CTA -->
-        <button id="btn-calc" class="btn-cta" onclick="calculate()">
-          Calcular Estrategia
-        </button>
-
-        <!-- Error -->
-        <p id="error-msg" class="error-msg hidden"></p>
-
       </div>
-
-      <!-- Footer note -->
-      <p style="font-size:10px;color:rgba(161,161,170,0.5);text-align:center">
-        Estrategia orientativa · No reemplaza entrenamiento profesional
-      </p>
 
     </div>
   </div>
 
 
-  <!-- ═══════════════════════════════════════════
-       SCREEN: RESULTS
-  ═══════════════════════════════════════════ -->
-  <div id="screen-results" class="hidden">
-    <div class="accent-line"></div>
+  <!-- ══════════════════════════════════════════
+       SCREEN: RITMO OBJETIVO (form)
+  ══════════════════════════════════════════ -->
+  <div id="screen-form" class="screen hidden">
+    <div class="gline"></div>
+
+    <div class="form-inner">
+
+      <div class="form-header">
+        <button class="back-btn" onclick="showScreen('landing')" style="margin-bottom:20px">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Volver
+        </button>
+        <div class="form-tag">Ritmo Objetivo</div>
+        <div class="form-title">Calculá tu estrategia km a km</div>
+      </div>
+
+      <div>
+        <span class="field-label">Distancia</span>
+        <div class="dist-grid">
+          <button id="btn-5k" class="dist-btn" onclick="selectDistance('5k')">5K</button>
+          <button id="btn-10k" class="dist-btn" onclick="selectDistance('10k')">10K</button>
+        </div>
+
+        <span class="field-label">Tiempo objetivo</span>
+        <input id="time-input" class="time-input" type="text" inputmode="decimal" placeholder="25:00" autocomplete="off" spellcheck="false">
+        <p class="time-hint">MM:SS &nbsp;·&nbsp; H:MM:SS</p>
+
+        <button id="btn-calc" class="btn-neon" onclick="calculate()">Calcular estrategia</button>
+        <p id="error-msg" class="error-msg hidden" style="margin-top:12px"></p>
+      </div>
+
+      <p class="form-footer-note">Herramienta orientativa · NeuroTech</p>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════
+       SCREEN: RESULTS (shared)
+  ══════════════════════════════════════════ -->
+  <div id="screen-results" class="screen hidden">
+    <div class="gline"></div>
 
     <div class="results-inner">
 
-      <!-- Back + title -->
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
-        <button class="back-btn" onclick="showForm()">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M19 12H5M12 19l-7-7 7-7"/>
-          </svg>
+      <div class="results-top">
+        <button class="back-btn" onclick="resultsBack()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
           Volver
         </button>
-        <div style="border-left:1px solid rgba(255,255,255,0.1);padding-left:12px">
-          <div style="font-family:'Orbitron',sans-serif;font-size:8px;letter-spacing:0.4em;color:#9AFF5F;text-transform:uppercase">Estrategia</div>
-          <div id="result-title" style="font-family:'Orbitron',sans-serif;font-weight:700;font-size:1.1rem;color:#fff">5K · 25:00</div>
+        <div class="results-id">
+          <div class="results-mode" id="results-mode">Estrategia</div>
+          <div class="results-name" id="result-title">5K · 25:00</div>
         </div>
       </div>
 
       <!-- Summary -->
       <div class="summary-grid">
         <div class="summary-card">
-          <div class="summary-card-label">Ritmo base</div>
-          <div class="summary-card-value" id="pace-base" style="color:#fff">5:00</div>
-          <div class="summary-card-unit">/km promedio</div>
+          <div class="summary-label">Ritmo base</div>
+          <div class="summary-value" id="pace-base" style="color:white">5:00</div>
+          <div class="summary-unit">/km promedio</div>
         </div>
         <div class="summary-card">
-          <div class="summary-card-label">Objetivo</div>
-          <div class="summary-card-value" id="time-total" style="color:#9AFF5F">25:00</div>
-          <div class="summary-card-unit">tiempo total</div>
+          <div class="summary-label">Objetivo</div>
+          <div class="summary-value" id="time-total" style="color:var(--green)">25:00</div>
+          <div class="summary-unit">tiempo total</div>
         </div>
       </div>
 
       <!-- Elevation profile -->
       <div class="elev-wrap">
-        <div class="elev-label">Perfil de elevación</div>
+        <div class="elev-label">Perfil de elevación · Recorrido real</div>
         <div class="elev-bars" id="elev-profile"></div>
       </div>
 
-      <!-- Table header -->
+      <!-- Table -->
       <div class="table-header">
-        <div>KM</div>
-        <div>TRAMO</div>
-        <div>RITMO</div>
-        <div style="text-align:right">ACUM.</div>
+        <div>KM</div><div>TRAMO</div><div>RITMO</div><div style="text-align:right">ACUM.</div>
       </div>
-
-      <!-- Table rows -->
       <div id="results-table"></div>
 
       <!-- Tip -->
-      <div class="tip-box">
-        <p id="tip-text"></p>
+      <div class="tip-box"><p id="tip-text"></p></div>
+
+      <!-- Methodology note -->
+      <div class="method-note">
+        <div class="method-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <p class="method-text">Los ritmos se calculan ajustando el desnivel real del recorrido con un modelo orientativo (principio asimétrico subida/bajada, Minetti et al. 2002). El km 1 refleja la salida típica de carrera. Herramienta de orientación, no una predicción científica exacta.</p>
       </div>
 
-      <!-- Social block -->
+      <!-- Social -->
       <div class="social-row">
         <a class="social-link wa" href="https://wa.me/5492604087086?text=Hola%20NeuroTech!%20Us%C3%A9%20la%20app%20de%20estrategia%20de%20carrera." target="_blank" rel="noopener">
           <img src="https://img.icons8.com/color/96/whatsapp--v1.png" alt="WhatsApp">
@@ -463,11 +875,9 @@
         </a>
       </div>
 
-      <div class="footer-info">
-        <p>📧 info@neurotechsoluciones.com</p>
-        <p style="color:rgba(161,161,170,0.6);margin-top:4px">
-          <strong>NeuroTech Cursos y Capacitaciones · San Rafael, Mendoza</strong>
-        </p>
+      <div class="results-footer">
+        <p>info@neurotechsoluciones.com</p>
+        <p style="color:rgba(161,161,170,0.5);margin-top:4px"><strong>NeuroTech Cursos y Capacitaciones · San Rafael, Mendoza</strong></p>
       </div>
 
     </div>
