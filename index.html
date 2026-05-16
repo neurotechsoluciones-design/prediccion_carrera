@@ -575,6 +575,85 @@
     .social-link.yt:hover span { color: #FF0000; }
 
     .results-footer { border-top: 1px solid rgba(255,255,255,0.05); padding-top: 18px; text-align: center; font-size: 10px; color: var(--muted); line-height: 1.8; }
+
+    /* ── Action buttons ── */
+    .action-btns { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+    .action-btns .btn-neon,
+    .action-btns .btn-ghost { display: inline-flex; align-items: center; justify-content: center; gap: 10px; }
+
+    /* ── Garmin accordion ── */
+    .garmin-box {
+      background: var(--bg2);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px;
+      padding: 20px 18px;
+      margin-bottom: 16px;
+      font-size: 0.82rem;
+      line-height: 1.75;
+      color: var(--muted);
+    }
+    .garmin-box h4 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 14px;
+      margin-top: 20px;
+    }
+    .garmin-box h4:first-child { margin-top: 0; }
+    .garmin-box ol { padding-left: 18px; }
+    .garmin-box li { margin-bottom: 6px; }
+    .garmin-box li strong { color: white; }
+    .garmin-pace-tbl { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 0.78rem; }
+    .garmin-pace-tbl th {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 8px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 6px 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      text-align: left;
+    }
+    .garmin-pace-tbl td { padding: 7px 8px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .garmin-pace-tbl td:first-child { color: white; font-weight: 600; }
+    .garmin-pace-tbl td:nth-child(2) { color: var(--green); font-family: 'Orbitron', sans-serif; font-size: 0.8rem; font-weight: 700; }
+    .garmin-pace-tbl td:nth-child(3) { color: var(--muted); font-size: 0.75rem; }
+
+    /* ── Recorrido table ── */
+    .recorrido-box {
+      background: var(--bg2);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px;
+      padding: 16px 14px;
+      margin-bottom: 16px;
+      overflow-x: auto;
+    }
+    .recorrido-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 8px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .recorrido-tbl { width: 100%; border-collapse: collapse; font-size: 0.76rem; }
+    .recorrido-tbl th {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 7px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 5px 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      text-align: left;
+      white-space: nowrap;
+    }
+    .recorrido-tbl td { padding: 8px 8px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: top; }
+    .recorrido-tbl td:first-child { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 1rem; color: white; white-space: nowrap; }
+    .recorrido-tbl td:nth-child(4) { color: var(--green); font-family: 'Orbitron', sans-serif; font-weight: 700; white-space: nowrap; }
+    .recorrido-tbl td:nth-child(5) { color: var(--muted); font-size: 0.72rem; line-height: 1.5; }
   </style>
 </head>
 
@@ -851,6 +930,73 @@
       <!-- Tip -->
       <div class="tip-box"><p id="tip-text"></p></div>
 
+      <!-- Action buttons -->
+      <div class="action-btns">
+        <button class="btn-neon" onclick="downloadPDF()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Descargar plan en PDF
+        </button>
+        <button class="btn-ghost" onclick="toggleGarmin()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Ver cómo cargarlo en mi Garmin
+        </button>
+        <button class="btn-ghost" onclick="toggleRecorrido()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+          Ver estrategia por recorrido
+        </button>
+      </div>
+
+      <!-- Garmin accordion -->
+      <div id="garmin-accordion" class="hidden">
+        <div class="garmin-box">
+          <h4>Cómo crear la sesión en Garmin Connect</h4>
+          <ol>
+            <li>Abrí <strong>Garmin Connect</strong>.</li>
+            <li>Entrá en <strong>Más</strong>.</li>
+            <li>Seleccioná <strong>Entreno y planificación</strong>.</li>
+            <li>Entrá en <strong>Sesiones de entrenamiento</strong>.</li>
+            <li>Tocá <strong>Crear una sesión de entrenamiento</strong>.</li>
+            <li>Elegí <strong>Carrera</strong>.</li>
+            <li>Borrá desde la cruz el <strong>calentamiento</strong> y el <strong>enfriamiento</strong>.</li>
+            <li>Agregá <strong>un paso por cada kilómetro</strong> — vas a tener <strong><span id="garmin-steps-count">5 ó 10</span> pasos</strong> en total.</li>
+            <li>En cada paso, colocá <strong>distancia: 1 km</strong>.</li>
+            <li>En <strong>objetivo</strong>, elegí <strong>ritmo</strong>.</li>
+            <li>Usá estos rangos de ritmo para cada km (±5 segundos):</li>
+          </ol>
+          <table class="garmin-pace-tbl">
+            <thead>
+              <tr><th>Kilómetro</th><th>Ritmo</th><th>Rango sugerido</th></tr>
+            </thead>
+            <tbody id="garmin-pace-table"></tbody>
+          </table>
+          <ol start="12">
+            <li>Guardá el entrenamiento con el <strong>nombre de la carrera</strong>.</li>
+            <li>Tocá la sesión que creaste → ícono <strong>Enviar al dispositivo</strong> (dibujo del reloj) → elegí tu reloj y <strong>sincronizá</strong>.</li>
+          </ol>
+
+          <h4>El día de la carrera en el reloj</h4>
+          <ol>
+            <li>En el reloj, entrá a <strong>Carrera</strong>.</li>
+            <li>Buscá <strong>Entrenamiento</strong> o <strong>Sesiones de entrenamiento</strong>.</li>
+            <li>Seleccioná la sesión con el nombre que elegiste.</li>
+            <li>Tocá <strong>Realizar entrenamiento</strong> o <strong>Iniciar</strong>.</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Recorrido section -->
+      <div id="recorrido-section" class="hidden">
+        <div class="recorrido-box">
+          <div class="recorrido-label">Estrategia por recorrido · Calles reales</div>
+          <table class="recorrido-tbl">
+            <thead>
+              <tr><th>KM</th><th>Desde</th><th>Hasta</th><th>Ritmo</th><th>Consejo</th></tr>
+            </thead>
+            <tbody id="recorrido-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+
       <!-- Methodology note -->
       <div class="method-note">
         <div class="method-icon">
@@ -883,6 +1029,8 @@
     </div>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

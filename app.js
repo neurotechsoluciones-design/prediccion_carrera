@@ -1,5 +1,11 @@
 // ── Route cache ──────────────────────────────────────────────────
 const ROUTE_DATA = {};
+const REFS_CACHE = {};
+
+// ── Last results (shared by PDF, Garmin, Recorrido) ──────────────
+let lastSegments = null;
+let lastDistance = null;
+let lastTargetSecs = null;
 
 // ── Time utilities ───────────────────────────────────────────────
 function parseTime(str) {
@@ -276,6 +282,13 @@ async function calculate() {
 
 // ── Render ───────────────────────────────────────────────────────
 function renderResults(segments, targetSecs, distance, route) {
+  lastSegments = segments;
+  lastDistance = distance;
+  lastTargetSecs = targetSecs;
+
+  document.getElementById('garmin-accordion').classList.add('hidden');
+  document.getElementById('recorrido-section').classList.add('hidden');
+
   const distLabel = distance === '5k' ? '5K' : '10K';
   const paceBase = targetSecs / parseInt(distance);
 
@@ -379,6 +392,127 @@ function renderTip(segments, distance) {
 
   const tip = `El km 1 refleja la salida real de carrera: más rápido por posicionamiento y adrenalina. A partir del km 2, seguí el ritmo de la tabla. ${terrainTip}`;
   document.getElementById('tip-text').textContent = tip;
+}
+
+// ── PDF download ─────────────────────────────────────────────────
+function downloadPDF() {
+  if (!lastSegments) return;
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  const distLabel = lastDistance === '5k' ? '5K' : '10K';
+  const paceBase = lastTargetSecs / parseInt(lastDistance);
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(15);
+  doc.setTextColor(10, 26, 47);
+  doc.text('Carrera Heroes de Malvinas', 105, 18, { align: 'center' });
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(80, 80, 80);
+  doc.text(
+    distLabel + '  ·  Objetivo: ' + formatTime(lastTargetSecs) + '  ·  Ritmo base: ' + formatPace(paceBase) + ' /km',
+    105, 26, { align: 'center' }
+  );
+
+  const rows = lastSegments.map(seg => {
+    const tramo = seg.km === 1 ? 'Salida rapida' : getTerrainInfo(seg.grade_pct).label;
+    return [String(seg.km), tramo, formatPace(seg.pace) + ' /km', formatTime(seg.cumulative)];
+  });
+
+  doc.autoTable({
+    startY: 34,
+    head: [['KM', 'Tramo', 'Ritmo sugerido', 'Tiempo acum.']],
+    body: rows,
+    headStyles: { fillColor: [10, 26, 47], textColor: [154, 255, 95], fontStyle: 'bold', fontSize: 9 },
+    bodyStyles: { fontSize: 10 },
+    alternateRowStyles: { fillColor: [245, 248, 252] },
+    columnStyles: {
+      0: { cellWidth: 14, halign: 'center' },
+      1: { cellWidth: 68 },
+      2: { cellWidth: 50, halign: 'center' },
+      3: { cellWidth: 38, halign: 'center' }
+    },
+    margin: { left: 20, right: 20 }
+  });
+
+  const finalY = doc.lastAutoTable.finalY + 8;
+  doc.setFontSize(7.5);
+  doc.setTextColor(150);
+  doc.text(
+    'NeuroTech · Herramienta orientativa · No reemplaza evaluacion profesional',
+    105, finalY, { align: 'center' }
+  );
+
+  const filename = 'plan-' + distLabel + '-' + formatTime(lastTargetSecs).replace(/:/g, '-') + '.pdf';
+  doc.save(filename);
+}
+
+// ── Garmin accordion ─────────────────────────────────────────────
+function toggleGarmin() {
+  const el = document.getElementById('garmin-accordion');
+  if (!el.classList.contains('hidden')) {
+    el.classList.add('hidden');
+    return;
+  }
+  document.getElementById('garmin-steps-count').textContent = lastDistance === '10k' ? '10' : '5';
+  renderGarminPaces(lastSegments);
+  el.classList.remove('hidden');
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function renderGarminPaces(segments) {
+  const tbody = document.getElementById('garmin-pace-table');
+  tbody.innerHTML = '';
+  segments.forEach(seg => {
+    const lo = formatPace(Math.max(60, seg.pace - 5));
+    const hi = formatPace(seg.pace + 5);
+    const tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td>Km ' + seg.km + '</td>' +
+      '<td>' + formatPace(seg.pace) + ' /km</td>' +
+      '<td>' + lo + ' → ' + hi + '</td>';
+    tbody.appendChild(tr);
+  });
+}
+
+// ── Recorrido por calles ──────────────────────────────────────────
+async function toggleRecorrido() {
+  const el = document.getElementById('recorrido-section');
+  if (!el.classList.contains('hidden')) {
+    el.classList.add('hidden');
+    return;
+  }
+  try {
+    if (!REFS_CACHE[lastDistance]) {
+      const res = await fetch('data/route-' + lastDistance + '-refs.json');
+      if (!res.ok) throw new Error('No se pudo cargar el recorrido.');
+      REFS_CACHE[lastDistance] = await res.json();
+    }
+    renderRecorridoTable(REFS_CACHE[lastDistance], lastSegments);
+    el.classList.remove('hidden');
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch (e) {
+    alert(e.message);
+  }
+}
+
+function renderRecorridoTable(refs, segments) {
+  const tbody = document.getElementById('recorrido-table-body');
+  tbody.innerHTML = '';
+  refs.forEach(ref => {
+    const seg = segments.find(s => s.km === ref.km);
+    const ritmo = seg ? formatPace(seg.pace) + ' /km' : '—';
+    const tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td>' + ref.km + '</td>' +
+      '<td>' + ref.desde + '</td>' +
+      '<td>' + ref.hasta + '</td>' +
+      '<td>' + ritmo + '</td>' +
+      '<td>' + ref.consejo + '</td>';
+    tbody.appendChild(tr);
+  });
 }
 
 // ── Init ─────────────────────────────────────────────────────────
