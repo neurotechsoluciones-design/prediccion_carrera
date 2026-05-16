@@ -84,11 +84,11 @@ function calculateStrategy(route, targetSecs) {
 
 // ── Terrain classification ───────────────────────────────────────
 function getTerrainInfo(grade) {
-  if (grade > 2)    return { icon: '↑', label: 'Subida',   color: '#F97316' };
-  if (grade > 0.5)  return { icon: '↗', label: 'Leve ↗',  color: '#FCA853' };
-  if (grade < -2)   return { icon: '↓', label: 'Bajada',   color: '#9AFF5F' };
-  if (grade < -0.5) return { icon: '↘', label: 'Leve ↘',  color: '#7DEBA3' };
-  return              { icon: '→', label: 'Plano',          color: '#A1A1AA' };
+  if (grade > 2)    return { icon: '↑', label: 'Subida',        pdfLabel: 'Subida',        color: '#F97316' };
+  if (grade > 0.5)  return { icon: '↗', label: 'Leve subida',   pdfLabel: 'Leve subida',   color: '#FCA853' };
+  if (grade < -2)   return { icon: '↓', label: 'Bajada',        pdfLabel: 'Bajada',        color: '#9AFF5F' };
+  if (grade < -0.5) return { icon: '↘', label: 'Leve bajada',   pdfLabel: 'Leve bajada',   color: '#7DEBA3' };
+  return              { icon: '→', label: 'Plano',               pdfLabel: 'Plano',         color: '#A1A1AA' };
 }
 
 // ── Screen navigation ────────────────────────────────────────────
@@ -235,11 +235,7 @@ async function goToGuiarmeStrategy() {
 }
 
 function guiarmeBack() {
-  if (guiarmeStep > 1) {
-    showGuiarmeStep(guiarmeStep - 1);
-  } else {
-    showScreen('landing');
-  }
+  showScreen('landing');
 }
 
 function resultsBack() {
@@ -452,7 +448,7 @@ function downloadPDF() {
   );
 
   const rows = lastSegments.map(seg => {
-    const tramo = seg.km === 1 ? 'Salida rapida' : getTerrainInfo(seg.grade_pct).label;
+    const tramo = seg.km === 1 ? 'Salida rapida' : getTerrainInfo(seg.grade_pct).pdfLabel;
     return [String(seg.km), tramo, formatPace(seg.pace) + ' /km', formatTime(seg.cumulative)];
   });
 
