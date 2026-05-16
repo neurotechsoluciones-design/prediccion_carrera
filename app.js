@@ -2,10 +2,16 @@
 const ROUTE_DATA = {};
 const REFS_CACHE = {};
 
-// ── Last results (shared by PDF, Garmin, Recorrido) ──────────────
+// ── Last results (shared by PDF, Garmin, Map) ────────────────────
 let lastSegments = null;
 let lastDistance = null;
 let lastTargetSecs = null;
+
+// ── Map state ────────────────────────────────────────────────────
+let leafletMap = null;
+let mapRouteLayer = null;
+let mapMarkerLayers = [];
+let currentMapDistance = null;
 
 // ── Time utilities ───────────────────────────────────────────────
 function parseTime(str) {
@@ -86,7 +92,7 @@ function getTerrainInfo(grade) {
 }
 
 // ── Screen navigation ────────────────────────────────────────────
-const SCREENS = ['landing', 'guiarme', 'form', 'results'];
+const SCREENS = ['landing', 'guiarme', 'form', 'results', 'map'];
 
 function showScreen(name) {
   SCREENS.forEach(s => {
@@ -287,7 +293,6 @@ function renderResults(segments, targetSecs, distance, route) {
   lastTargetSecs = targetSecs;
 
   document.getElementById('garmin-accordion').classList.add('hidden');
-  document.getElementById('recorrido-section').classList.add('hidden');
 
   const distLabel = distance === '5k' ? '5K' : '10K';
   const paceBase = targetSecs / parseInt(distance);
@@ -296,7 +301,7 @@ function renderResults(segments, targetSecs, distance, route) {
   document.getElementById('pace-base').textContent = formatPace(paceBase);
   document.getElementById('time-total').textContent = formatTime(targetSecs);
 
-  renderElevationProfile(route);
+  renderElevationSVG(route, 'elev-profile');
 
   const table = document.getElementById('results-table');
   table.innerHTML = '';
@@ -347,32 +352,62 @@ function renderResults(segments, targetSecs, distance, route) {
   renderTip(segments, distance);
 }
 
-function renderElevationProfile(route) {
-  const container = document.getElementById('elev-profile');
+function renderElevationSVG(route, containerId) {
+  const container = document.getElementById(containerId);
   if (!container) return;
+
+  const W = Math.max(container.clientWidth, 280);
+  const H = 80;
+  const pad = { left: 30, right: 8, top: 8, bottom: 20 };
 
   const elevs = route.segments.map(s => s.ele_start);
   elevs.push(route.segments[route.segments.length - 1].ele_end);
-
   const minE = Math.min(...elevs);
   const maxE = Math.max(...elevs);
   const range = maxE - minE || 1;
 
-  container.innerHTML = '';
-  route.segments.forEach(seg => {
-    const h1 = ((seg.ele_start - minE) / range) * 32 + 4;
-    const h2 = ((seg.ele_end - minE) / range) * 32 + 4;
-    const avgH = (h1 + h2) / 2;
-    const terrain = getTerrainInfo(seg.grade_pct);
+  const n = elevs.length;
+  const xStep = (W - pad.left - pad.right) / (n - 1);
+  const pts = elevs.map((e, i) => [
+    pad.left + i * xStep,
+    pad.top + (1 - (e - minE) / range) * (H - pad.top - pad.bottom)
+  ]);
 
-    const bar = document.createElement('div');
-    bar.style.cssText = `flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:2px`;
-    bar.innerHTML = `
-      <div style="width:100%;border-radius:4px 4px 0 0;background:${terrain.color};opacity:0.7;height:${avgH}px;min-height:4px"></div>
-      <div style="font-size:9px;color:#A1A1AA;font-family:'Orbitron',sans-serif">${seg.km}</div>
-    `;
-    container.appendChild(bar);
-  });
+  const polyline = pts.map(p => p[0] + ',' + p[1]).join(' ');
+  const area = 'M' + pts[0][0] + ',' + (H - pad.bottom) +
+    ' L' + pts.map(p => p[0] + ',' + p[1]).join(' L') +
+    ' L' + pts[pts.length - 1][0] + ',' + (H - pad.bottom) + ' Z';
+
+  const kmLabels = route.segments.map((seg, i) =>
+    `<text x="${pts[i][0]}" y="${H - 4}" fill="#6F7D94" font-size="8" font-family="Orbitron,sans-serif" text-anchor="middle">${seg.km}</text>`
+  ).join('');
+
+  const topLabel = `<text x="${pad.left - 4}" y="${pad.top + 6}" fill="#6F7D94" font-size="7" font-family="Inter,sans-serif" text-anchor="end">${Math.round(maxE)}m</text>`;
+  const botLabel = `<text x="${pad.left - 4}" y="${H - pad.bottom}" fill="#6F7D94" font-size="7" font-family="Inter,sans-serif" text-anchor="end">${Math.round(minE)}m</text>`;
+
+  const gridLines = [0.25, 0.5, 0.75].map(f => {
+    const y = pad.top + f * (H - pad.top - pad.bottom);
+    return `<line x1="${pad.left}" y1="${y}" x2="${W - pad.right}" y2="${y}" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>`;
+  }).join('');
+
+  container.innerHTML = `<svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+    <defs>
+      <linearGradient id="elevGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#2100E5" stop-opacity="0.35"/>
+        <stop offset="100%" stop-color="#2100E5" stop-opacity="0.02"/>
+      </linearGradient>
+      <filter id="glowLine">
+        <feGaussianBlur stdDeviation="1.5" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    <line x1="${pad.left}" y1="${pad.top}" x2="${pad.left}" y2="${H - pad.bottom}" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+    <line x1="${pad.left}" y1="${H - pad.bottom}" x2="${W - pad.right}" y2="${H - pad.bottom}" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+    ${gridLines}
+    <path d="${area}" fill="url(#elevGrad)"/>
+    <polyline points="${polyline}" fill="none" stroke="#9AFF5F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#glowLine)"/>
+    ${kmLabels}${topLabel}${botLabel}
+  </svg>`;
 }
 
 function renderTip(segments, distance) {
@@ -477,41 +512,170 @@ function renderGarminPaces(segments) {
   });
 }
 
-// ── Recorrido por calles ──────────────────────────────────────────
-async function toggleRecorrido() {
-  const el = document.getElementById('recorrido-section');
-  if (!el.classList.contains('hidden')) {
-    el.classList.add('hidden');
-    return;
+// ── Map screen ───────────────────────────────────────────────────
+function showMapScreen() {
+  if (!lastSegments) return;
+  document.getElementById('map-screen-title').textContent = 'Recorrido · ' + (lastDistance === '5k' ? '5K' : '10K');
+  showScreen('map');
+
+  if (!leafletMap) {
+    setTimeout(initLeafletMap, 50);
+  } else if (currentMapDistance !== lastDistance) {
+    updateMapForDistance();
+  } else {
+    rebuildKmMarkers();
   }
-  try {
-    if (!REFS_CACHE[lastDistance]) {
-      const res = await fetch('data/route-' + lastDistance + '-refs.json');
-      if (!res.ok) throw new Error('No se pudo cargar el recorrido.');
-      REFS_CACHE[lastDistance] = await res.json();
-    }
-    renderRecorridoTable(REFS_CACHE[lastDistance], lastSegments);
-    el.classList.remove('hidden');
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  } catch (e) {
-    alert(e.message);
-  }
+  renderMapKmList();
 }
 
-function renderRecorridoTable(refs, segments) {
-  const tbody = document.getElementById('recorrido-table-body');
-  tbody.innerHTML = '';
+async function initLeafletMap() {
+  leafletMap = L.map('leaflet-map', {
+    zoomControl: true,
+    attributionControl: false
+  });
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    subdomains: 'abcd',
+    maxZoom: 19
+  }).addTo(leafletMap);
+
+  L.control.attribution({ prefix: '© OpenStreetMap · © CARTO' }).addTo(leafletMap);
+
+  await updateMapForDistance();
+}
+
+async function updateMapForDistance() {
+  currentMapDistance = lastDistance;
+
+  mapMarkerLayers.forEach(m => leafletMap.removeLayer(m));
+  mapMarkerLayers = [];
+  if (mapRouteLayer) { leafletMap.removeLayer(mapRouteLayer); mapRouteLayer = null; }
+
+  const cacheKey = 'geo_' + lastDistance;
+  if (!REFS_CACHE[cacheKey]) {
+    try {
+      const res = await fetch('data/recorrido-' + lastDistance + '.geojson');
+      if (!res.ok) throw new Error('No se pudo cargar el recorrido GeoJSON.');
+      REFS_CACHE[cacheKey] = await res.json();
+    } catch (e) {
+      alert(e.message);
+      return;
+    }
+  }
+
+  const geojson = REFS_CACHE[cacheKey];
+  const bounds = [];
+
+  geojson.features.forEach(f => {
+    const t = f.properties.type;
+    const coords = f.geometry.coordinates;
+
+    if (t === 'route') {
+      const latLngs = coords.map(c => [c[1], c[0]]);
+      mapRouteLayer = L.polyline(latLngs, {
+        color: '#9AFF5F', weight: 4, opacity: 0.9
+      }).addTo(leafletMap);
+      bounds.push(...latLngs);
+
+    } else if (t === 'start_finish') {
+      const m = L.marker([coords[1], coords[0]], { icon: createStartFinishIcon() })
+        .bindTooltip('Largada / Meta', { className: 'map-tooltip', direction: 'top' })
+        .addTo(leafletMap);
+      mapMarkerLayers.push(m);
+
+    } else if (t === 'hydration') {
+      const m = L.marker([coords[1], coords[0]], { icon: createHydrationIcon() })
+        .bindTooltip('Puesto de hidratación', { className: 'map-tooltip', direction: 'top' })
+        .addTo(leafletMap);
+      mapMarkerLayers.push(m);
+
+    } else if (t === 'km') {
+      const seg = lastSegments.find(s => s.km === f.properties.km);
+      const m = L.marker([coords[1], coords[0]], { icon: createKmIcon(f.properties.km, seg) })
+        .addTo(leafletMap);
+      mapMarkerLayers.push(m);
+    }
+  });
+
+  if (bounds.length) leafletMap.fitBounds(bounds, { padding: [24, 24] });
+
+  const route = ROUTE_DATA[lastDistance];
+  if (route) renderElevationSVG(route, 'map-elev-profile');
+}
+
+function rebuildKmMarkers() {
+  updateMapForDistance();
+}
+
+function createStartFinishIcon() {
+  return L.divIcon({
+    html: '<div class="map-marker-start"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9AFF5F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></div>',
+    className: '',
+    iconSize: [36, 36],
+    iconAnchor: [18, 18]
+  });
+}
+
+function createHydrationIcon() {
+  return L.divIcon({
+    html: '<div class="map-marker-hydration"><svg width="14" height="14" viewBox="0 0 24 24" fill="#38BDF8" stroke="none"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></div>',
+    className: '',
+    iconSize: [32, 32],
+    iconAnchor: [16, 16]
+  });
+}
+
+function createKmIcon(km, seg) {
+  const pace = seg ? formatPace(seg.pace) : '—';
+  const cumul = seg ? formatTime(seg.cumulative) : '—';
+  return L.divIcon({
+    html: '<div class="map-marker-km">' +
+      '<div class="map-km-bubble">' +
+      '<span class="map-km-num">' + km + '</span>' +
+      '<span class="map-km-pace-lbl">' + pace + '</span>' +
+      '<span class="map-km-cumul-lbl">' + cumul + '</span>' +
+      '</div>' +
+      '<div class="map-km-dot"></div>' +
+      '</div>',
+    className: '',
+    iconSize: [60, 52],
+    iconAnchor: [30, 52]
+  });
+}
+
+async function renderMapKmList() {
+  const listEl = document.getElementById('map-km-list');
+
+  if (!REFS_CACHE[lastDistance]) {
+    listEl.innerHTML = '<div style="color:var(--muted);padding:16px;font-size:0.8rem">Cargando referencias...</div>';
+    try {
+      const res = await fetch('data/route-' + lastDistance + '-refs.json');
+      if (!res.ok) throw new Error();
+      REFS_CACHE[lastDistance] = await res.json();
+    } catch {
+      listEl.innerHTML = '<div style="color:var(--muted);padding:16px;font-size:0.8rem">No se pudieron cargar las referencias.</div>';
+      return;
+    }
+  }
+
+  const refs = REFS_CACHE[lastDistance];
+  listEl.innerHTML = '';
   refs.forEach(ref => {
-    const seg = segments.find(s => s.km === ref.km);
+    const seg = lastSegments ? lastSegments.find(s => s.km === ref.km) : null;
+    const terrain = seg
+      ? (seg.km === 1 ? { color: '#9AFF5F' } : getTerrainInfo(seg.grade_pct))
+      : { color: '#6F7D94' };
     const ritmo = seg ? formatPace(seg.pace) + ' /km' : '—';
-    const tr = document.createElement('tr');
-    tr.innerHTML =
-      '<td>' + ref.km + '</td>' +
-      '<td>' + ref.desde + '</td>' +
-      '<td>' + ref.hasta + '</td>' +
-      '<td>' + ritmo + '</td>' +
-      '<td>' + ref.consejo + '</td>';
-    tbody.appendChild(tr);
+
+    const row = document.createElement('div');
+    row.className = 'map-km-row';
+    row.style.borderLeftColor = terrain.color;
+    row.innerHTML =
+      '<div class="map-km-row-num">' + ref.km + '</div>' +
+      '<div><div class="map-km-row-calles">' + ref.desde + ' → ' + ref.hasta + '</div>' +
+      '<div class="map-km-row-consejo">' + ref.consejo + '</div></div>' +
+      '<div class="map-km-row-pace">' + ritmo + '</div>';
+    listEl.appendChild(row);
   });
 }
 
