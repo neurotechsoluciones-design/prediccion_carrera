@@ -1,0 +1,32 @@
+[
+  {
+    "km": 1,
+    "desde": "Largada · Av. Dr. Vicchi (Polideportivo N°1)",
+    "hasta": "Florentino Ameghino",
+    "consejo": "Salida rápida. Bajada leve — no te dejes llevar por la adrenalina."
+  },
+  {
+    "km": 2,
+    "desde": "Florentino Ameghino",
+    "hasta": "Av. Hipólito Yrigoyen",
+    "consejo": "Bajada más pronunciada. Aprovechá sin forzar las piernas."
+  },
+  {
+    "km": 3,
+    "desde": "Av. Hipólito Yrigoyen",
+    "hasta": "Av. Ingeniero Ballofet",
+    "consejo": "Leve subida. Corto y firme, no pierdas el ritmo."
+  },
+  {
+    "km": 4,
+    "desde": "Av. Ingeniero Ballofet",
+    "hasta": "Av. Sarmiento",
+    "consejo": "Subida hacia el final. Mantené el esfuerzo, no el tiempo exacto."
+  },
+  {
+    "km": 5,
+    "desde": "Av. Sarmiento",
+    "hasta": "Meta · Av. Dr. Vicchi",
+    "consejo": "Plano. Todo lo que tenés, ahora. La meta está cerca."
+  }
+]

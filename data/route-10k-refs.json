@@ -1,0 +1,62 @@
+[
+  {
+    "km": 1,
+    "desde": "Largada · Av. Dr. Vicchi (Polideportivo N°1)",
+    "hasta": "Florentino Ameghino",
+    "consejo": "Salida rápida. Bajada leve — no arranques demasiado fuerte."
+  },
+  {
+    "km": 2,
+    "desde": "Florentino Ameghino",
+    "hasta": "Av. Hipólito Yrigoyen",
+    "consejo": "Bajada continua. Ritmo cómodo, guardá piernas para la vuelta."
+  },
+  {
+    "km": 3,
+    "desde": "Av. Hipólito Yrigoyen",
+    "hasta": "Av. Hipólito Yrigoyen (extremo)",
+    "consejo": "Seguís bajando. Controlá el impulso, hay 7 km más."
+  },
+  {
+    "km": 4,
+    "desde": "Av. Hipólito Yrigoyen (extremo)",
+    "hasta": "Av. El Libertador",
+    "consejo": "El terreno se nivela. Empezá a estabilizar el ritmo objetivo."
+  },
+  {
+    "km": 5,
+    "desde": "Av. El Libertador",
+    "hasta": "Av. 9 de Julio",
+    "consejo": "Leve subida en la mitad de carrera. Corto y firme."
+  },
+  {
+    "km": 6,
+    "desde": "Av. 9 de Julio",
+    "hasta": "Av. Los Sauces",
+    "consejo": "Seguís subiendo. Tramo clave: mantené el ritmo sin aflojar."
+  },
+  {
+    "km": 7,
+    "desde": "Av. Los Sauces",
+    "hasta": "Av. Los Sauces (oeste)",
+    "consejo": "Subida más exigente. La tabla ya la tiene compensada — confiá."
+  },
+  {
+    "km": 8,
+    "desde": "Av. Los Sauces (oeste)",
+    "hasta": "Av. Ingeniero Ballofet",
+    "consejo": "Bajada leve. Comenzás a volver. Últimos 3 km — mentalidad de cierre."
+  },
+  {
+    "km": 9,
+    "desde": "Av. Ingeniero Ballofet",
+    "hasta": "Sobremonte",
+    "consejo": "Última subida. Lo peor ya pasó. Vaciá el tanque."
+  },
+  {
+    "km": 10,
+    "desde": "Sobremonte",
+    "hasta": "Meta · Av. Dr. Vicchi",
+    "consejo": "Plano hacia la meta. Todo lo que tenés, ahora."
+  }
+]
