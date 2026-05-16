@@ -667,16 +667,16 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   timeInput.addEventListener('input', function () {
-    let v = this.value;
-    if (v.includes(':')) {
-      this.value = v.replace(/[^0-9:]/g, '');
-      return;
+    this.value = this.value.replace(/[^0-9:]/g, '');
+  });
+
+  timeInput.addEventListener('blur', function () {
+    let v = this.value.replace(/[^0-9:]/g, '');
+    if (!v.includes(':')) {
+      if (v.length === 6)      v = v.slice(0, 2) + ':' + v.slice(2, 4) + ':' + v.slice(4);
+      else if (v.length === 5) v = v.slice(0, 1) + ':' + v.slice(1, 3) + ':' + v.slice(3);
+      else if (v.length === 4) v = v.slice(0, 2) + ':' + v.slice(2);
     }
-    v = v.replace(/[^0-9]/g, '');
-    if (v.length > 6) v = v.slice(0, 6);
-    if (v.length === 6)      v = v.slice(0, 2) + ':' + v.slice(2, 4) + ':' + v.slice(4);
-    else if (v.length === 5) v = v.slice(0, 1) + ':' + v.slice(1, 3) + ':' + v.slice(3);
-    else if (v.length >= 3)  v = v.slice(0, v.length - 2) + ':' + v.slice(v.length - 2);
     this.value = v;
   });
 });
