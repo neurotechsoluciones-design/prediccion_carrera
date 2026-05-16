@@ -109,10 +109,6 @@ let guiarmeAnswers = {};
 
 function selectDistance(d) {
   selectedDistance = d;
-  ['5k', '10k'].forEach(id => {
-    const el = document.getElementById('btn-' + id);
-    el.classList.toggle('selected', id === d);
-  });
 }
 
 function showError(msg) {
@@ -579,12 +575,6 @@ async function updateMapForDistance() {
         .addTo(leafletMap);
       mapMarkerLayers.push(m);
 
-    } else if (t === 'hydration') {
-      const m = L.marker([coords[1], coords[0]], { icon: createHydrationIcon() })
-        .bindTooltip('Puesto de hidratación', { className: 'map-tooltip', direction: 'top' })
-        .addTo(leafletMap);
-      mapMarkerLayers.push(m);
-
     } else if (t === 'km') {
       const seg = lastSegments.find(s => s.km === f.properties.km);
       const m = L.marker([coords[1], coords[0]], { icon: createKmIcon(f.properties.km, seg) })
@@ -609,15 +599,6 @@ function createStartFinishIcon() {
     className: '',
     iconSize: [36, 36],
     iconAnchor: [18, 18]
-  });
-}
-
-function createHydrationIcon() {
-  return L.divIcon({
-    html: '<div class="map-marker-hydration"><svg width="14" height="14" viewBox="0 0 24 24" fill="#38BDF8" stroke="none"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></div>',
-    className: '',
-    iconSize: [32, 32],
-    iconAnchor: [16, 16]
   });
 }
 
@@ -686,10 +667,16 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   timeInput.addEventListener('input', function () {
-    let v = this.value.replace(/[^0-9]/g, '');
+    let v = this.value;
+    if (v.includes(':')) {
+      this.value = v.replace(/[^0-9:]/g, '');
+      return;
+    }
+    v = v.replace(/[^0-9]/g, '');
     if (v.length > 6) v = v.slice(0, 6);
-    if (v.length >= 5) v = v.slice(0, 2) + ':' + v.slice(2, 4) + ':' + v.slice(4);
-    else if (v.length >= 3) v = v.slice(0, v.length - 2) + ':' + v.slice(v.length - 2);
+    if (v.length === 6)      v = v.slice(0, 2) + ':' + v.slice(2, 4) + ':' + v.slice(4);
+    else if (v.length === 5) v = v.slice(0, 1) + ':' + v.slice(1, 3) + ':' + v.slice(3);
+    else if (v.length >= 3)  v = v.slice(0, v.length - 2) + ':' + v.slice(v.length - 2);
     this.value = v;
   });
 });

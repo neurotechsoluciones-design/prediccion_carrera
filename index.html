@@ -168,117 +168,189 @@
       margin-bottom: 36px;
     }
 
-    /* Glassmorphism mode cards */
+    /* ── Mode cards ── */
     .mode-cards { display: flex; flex-direction: column; gap: 14px; }
 
-    .mode-card {
-      background: var(--glass);
-      backdrop-filter: blur(24px) saturate(160%);
-      -webkit-backdrop-filter: blur(24px) saturate(160%);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 22px 20px 20px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-      text-align: left;
+    .mode-card-wrap {
       width: 100%;
+      padding: 3px;
+      border-radius: 28px;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      transition: transform 0.3s ease, filter 0.3s ease;
     }
-    .mode-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 20px;
-      background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 60%);
-      pointer-events: none;
+    .mode-card-wrap:hover { transform: translateY(-3px); filter: brightness(1.07); }
+    .mode-card-wrap:active { transform: scale(0.99); filter: none; }
+
+    .a-wrap {
+      background: linear-gradient(135deg, #31E981, #9AFF5F 45%, #5CDB2E 75%, #31E981 100%);
+    }
+    .b-wrap {
+      background: linear-gradient(to top right, #2100E5, #00145E 40%, #132642 70%, #2100E5 100%);
     }
 
-    .mode-card.a-card {
-      border-color: rgba(154,255,95,0.2);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(154,255,95,0.06), inset 0 1px 0 rgba(154,255,95,0.08);
-    }
-    .mode-card.a-card:hover {
-      border-color: rgba(154,255,95,0.4);
-      box-shadow: 0 24px 72px rgba(0,0,0,0.55), 0 0 48px rgba(154,255,95,0.12), inset 0 1px 0 rgba(154,255,95,0.12);
-      transform: translateY(-3px);
-    }
-    .mode-card.b-card {
-      box-shadow: 0 16px 48px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.04);
-    }
-    .mode-card.b-card:hover {
-      border-color: rgba(255,255,255,0.16);
-      box-shadow: 0 20px 56px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.07);
-      transform: translateY(-3px);
-    }
-
-    .card-tag {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 8px;
-      letter-spacing: 0.4em;
-      text-transform: uppercase;
-      margin-bottom: 8px;
+    .mode-card-header {
       display: flex;
       align-items: center;
+      padding: 10px 20px;
+      justify-content: space-between;
+      color: #fff;
+    }
+    .mode-card-header p {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.38em;
+      text-transform: uppercase;
+    }
+    .a-wrap .mode-card-header p { text-shadow: 0 0 14px rgba(92,219,46,0.9); }
+    .b-wrap .mode-card-header p { text-shadow: 0 0 14px rgba(80,120,255,0.9); }
+
+    .mode-card-body {
+      width: 100%;
+      background: var(--card);
+      border-radius: 26px;
+      color: var(--muted);
+      padding: 20px 20px 18px;
+      display: flex;
+      flex-direction: column;
       gap: 8px;
     }
-    .a-card .card-tag { color: var(--green); }
-    .b-card .card-tag { color: var(--muted); }
-
-    .card-tag-line { flex: 1; height: 1px; }
-    .a-card .card-tag-line { background: linear-gradient(to right, rgba(154,255,95,0.4), transparent); }
-    .b-card .card-tag-line { background: linear-gradient(to right, rgba(255,255,255,0.1), transparent); }
-
-    .card-name {
+    .mode-card-body .card-name {
       font-family: 'Orbitron', sans-serif;
       font-weight: 900;
       font-size: 1.3rem;
       color: white;
-      margin-bottom: 8px;
       letter-spacing: -0.01em;
     }
-
-    .card-claim {
+    .mode-card-body .card-claim {
       font-size: 0.82rem;
       color: rgba(255,255,255,0.65);
       line-height: 1.5;
-      margin-bottom: 4px;
     }
-
-    .card-detail {
+    .mode-card-body .card-detail {
       font-size: 0.75rem;
       color: var(--muted);
       line-height: 1.5;
-      margin-bottom: 18px;
+      margin-bottom: 4px;
     }
-
-    .card-cta {
-      display: inline-flex;
+    .mode-card-cta {
+      width: 100%;
+      display: flex;
       align-items: center;
+      justify-content: center;
       gap: 8px;
+      padding: 12px 16px;
+      border: none;
+      border-radius: 10px;
       font-family: 'Orbitron', sans-serif;
       font-weight: 700;
       font-size: 0.65rem;
-      letter-spacing: 0.22em;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
-      padding: 12px 18px;
-      border-radius: 10px;
-      border: none;
       cursor: pointer;
-      transition: all 0.2s;
-    }
-    .a-card .card-cta {
-      background: var(--green);
-      color: var(--bg1);
-      box-shadow: 0 0 20px rgba(154,255,95,0.35);
-    }
-    .a-card .card-cta:hover { box-shadow: 0 0 32px rgba(154,255,95,0.55); }
-    .b-card .card-cta {
-      background: rgba(255,255,255,0.07);
       color: white;
-      border: 1px solid rgba(255,255,255,0.12);
+      transition: all 0.3s ease-in-out;
+      box-shadow: inset 0 2px 4px rgba(255,255,255,0.2);
+      margin-top: 2px;
     }
-    .b-card .card-cta:hover { background: rgba(255,255,255,0.11); }
+    .a-wrap .mode-card-cta {
+      background: linear-gradient(135deg, #31E981, #9AFF5F 50%, #5CDB2E 100%);
+    }
+    .b-wrap .mode-card-cta {
+      background: linear-gradient(4deg, #2100E5, #00145E 50%, #2100E5 100%);
+    }
+    .mode-card-cta:hover { text-shadow: 0 0 10px rgba(255,255,255,0.7); transform: scale(1.02); }
+    .mode-card-cta:active { transform: scale(1); }
+
+    /* ── Distance selector (glass radio) ── */
+    .glass-radio-dist {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      padding: 6px;
+      border-radius: 16px;
+      border: 1px solid transparent;
+      overflow: hidden;
+      gap: 6px;
+      margin-bottom: 24px;
+      width: 100%;
+      transition: box-shadow 0.4s, border-color 0.4s;
+    }
+    .glass-radio-dist input { display: none; }
+    .glass-radio-dist label {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      padding: 15px 18px;
+      border-radius: 12px;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 1.25rem;
+      color: var(--muted);
+      cursor: pointer;
+      z-index: 2;
+      letter-spacing: 0.04em;
+      transition: color 0.4s ease-in-out;
+    }
+    .glass-dist-indicator {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: var(--card-strong);
+      border: 1.5px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.72rem;
+      color: white;
+      flex-shrink: 0;
+      transition: all 0.3s ease-in-out;
+    }
+    .glass-dist-check { opacity: 0; transform: scale(0); transition: all 0.3s ease-in-out; }
+    .glass-glider-dist {
+      position: absolute;
+      left: 6px;
+      top: 6px;
+      right: 6px;
+      height: 54px;
+      border-radius: 12px;
+      z-index: 1;
+      transition: transform 0.4s cubic-bezier(0.5,1.6,0.4,1), background 0.5s ease-in-out, box-shadow 0.4s;
+    }
+    #dist-5k:checked ~ .glass-glider-dist {
+      transform: translateY(0);
+      background: linear-gradient(135deg, rgba(0,0,0,0.25), rgba(168,179,199,0.3));
+      box-shadow: 0 0 20px rgba(168,179,199,0.1);
+    }
+    #dist-5k:checked + label { color: white; }
+    #dist-5k:checked + label .glass-dist-indicator {
+      background: #A8B3C7;
+      border-color: #8a97ad;
+      box-shadow: 0 0 0 2px rgba(168,179,199,0.4), 0 0 8px rgba(168,179,199,0.25);
+    }
+    #dist-5k:checked + label .glass-dist-check { opacity: 1; transform: scale(1); }
+
+    #dist-10k:checked ~ .glass-glider-dist {
+      transform: translateY(60px);
+      background: linear-gradient(135deg, rgba(0,0,0,0.25), rgba(154,255,95,0.22));
+      box-shadow: 0 0 20px rgba(154,255,95,0.12);
+    }
+    #dist-10k:checked + label { color: white; }
+    #dist-10k:checked + label .glass-dist-indicator {
+      background: var(--green);
+      border-color: rgba(154,255,95,0.6);
+      box-shadow: 0 0 0 2px rgba(154,255,95,0.35), 0 0 8px rgba(154,255,95,0.25);
+    }
+    #dist-10k:checked + label .glass-dist-check { opacity: 1; transform: scale(1); }
+
+    .glass-radio-dist:has(#dist-5k:checked) {
+      border-color: rgba(168,179,199,0.18);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2), inset 0 0 8px rgba(168,179,199,0.04);
+    }
+    .glass-radio-dist:has(#dist-10k:checked) {
+      border-color: rgba(154,255,95,0.14);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2), inset 0 0 8px rgba(154,255,95,0.05);
+    }
 
     .landing-footer {
       text-align: center;
@@ -338,35 +410,66 @@
       margin-bottom: 28px;
     }
 
-    .g-opts { display: flex; flex-direction: column; gap: 10px; }
+    .g-opts {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 6px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+    }
 
     .g-opt {
       width: 100%;
-      background: rgba(10,26,47,0.5);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 14px;
-      padding: 18px 20px;
+      background: transparent;
+      border: none;
+      border-radius: 12px;
+      padding: 15px 18px;
+      display: grid;
+      grid-template-columns: 22px 1fr;
+      grid-template-rows: auto auto;
+      column-gap: 14px;
+      row-gap: 2px;
       text-align: left;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: background 0.25s ease;
       -webkit-appearance: none;
+      position: relative;
     }
-    .g-opt:hover {
-      border-color: rgba(154,255,95,0.35);
-      background: rgba(154,255,95,0.05);
-      box-shadow: 0 0 20px rgba(154,255,95,0.08);
+    .g-opt::before {
+      content: '';
+      grid-column: 1;
+      grid-row: 1 / 3;
+      width: 20px;
+      height: 20px;
+      min-width: 20px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      background: var(--card-strong);
+      align-self: center;
+      transition: all 0.25s ease;
+    }
+    .g-opt:hover { background: rgba(154,255,95,0.06); }
+    .g-opt:hover::before {
+      border-color: rgba(154,255,95,0.5);
+      background: rgba(154,255,95,0.08);
+      box-shadow: 0 0 0 2px rgba(154,255,95,0.15);
     }
     .g-opt:active { transform: scale(0.99); }
     .g-opt-main {
+      grid-column: 2;
+      grid-row: 1;
       font-family: 'Inter', sans-serif;
       font-weight: 600;
       font-size: 0.9rem;
       color: white;
-      margin-bottom: 4px;
     }
-    .g-opt-sub { font-size: 0.75rem; color: var(--muted); }
+    .g-opt-sub {
+      grid-column: 2;
+      grid-row: 2;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
 
     /* Recommendation result (step 5) */
     .g-result { flex: 1; display: flex; flex-direction: column; }
@@ -471,27 +574,6 @@
       margin-bottom: 10px;
     }
 
-    .dist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
-    .dist-btn {
-      background: var(--bg2);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 14px;
-      padding: 20px 0;
-      font-family: 'Orbitron', sans-serif;
-      font-weight: 900;
-      font-size: 1.5rem;
-      color: var(--muted);
-      cursor: pointer;
-      transition: all 0.2s;
-      -webkit-appearance: none;
-    }
-    .dist-btn:active { transform: scale(0.97); }
-    .dist-btn.selected {
-      background: rgba(154,255,95,0.07);
-      border-color: var(--green);
-      color: var(--green);
-      box-shadow: 0 0 20px rgba(154,255,95,0.12);
-    }
 
     .time-input {
       width: 100%;
@@ -836,13 +918,6 @@
       display: flex; align-items: center; justify-content: center;
       box-shadow: 0 0 16px rgba(154,255,95,0.4);
     }
-    .map-marker-hydration {
-      width: 32px; height: 32px;
-      background: rgba(56,189,248,0.15);
-      border: 1.5px solid #38BDF8;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-    }
     .map-marker-km {
       display: flex;
       flex-direction: column;
@@ -909,33 +984,41 @@
       <div class="mode-cards">
 
         <!-- A: GUIARME -->
-        <div class="mode-card a-card" onclick="startGuiarme()">
-          <div class="card-tag">
-            Orientación
-            <div class="card-tag-line"></div>
+        <div class="mode-card-wrap a-wrap" onclick="startGuiarme()">
+          <div class="mode-card-header">
+            <p>Recomendado</p>
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
+              <path fill="currentColor" d="M10.277 16.515c.005-.11.187-.154.24-.058c.254.45.686 1.111 1.177 1.412c.49.3 1.275.386 1.791.408c.11.005.154.186.058.24c-.45.254-1.111.686-1.412 1.176s-.386 1.276-.408 1.792c-.005.11-.187.153-.24.057c-.254-.45-.686-1.11-1.176-1.411s-1.276-.386-1.792-.408c-.11-.005-.153-.187-.057-.24c.45-.254 1.11-.686 1.411-1.177c.301-.49.386-1.276.408-1.791m8.215-1c-.008-.11-.2-.156-.257-.062c-.172.283-.421.623-.697.793s-.693.236-1.023.262c-.11.008-.155.2-.062.257c.283.172.624.42.793.697s.237.693.262 1.023c.009.11.2.155.258.061c.172-.282.42-.623.697-.792s.692-.237 1.022-.262c.11-.009.156-.2.062-.258c-.283-.172-.624-.42-.793-.697s-.236-.692-.262-1.022M14.704 4.002l-.242-.306c-.937-1.183-1.405-1.775-1.95-1.688c-.545.088-.806.796-1.327 2.213l-.134.366c-.149.403-.223.604-.364.752c-.143.148-.336.225-.724.38l-.353.141l-.248.1c-1.2.48-1.804.753-1.881 1.283c-.082.565.49 1.049 1.634 2.016l.296.25c.325.275.488.413.58.6c.094.187.107.403.134.835l.024.393c.093 1.52.14 2.28.634 2.542s1.108-.147 2.336-.966l.318-.212c.35-.233.524-.35.723-.381c.2-.032.402.024.806.136l.368.102c1.422.394 2.133.591 2.52.188c.388-.403.196-1.14-.19-2.613l-.099-.381c-.11-.419-.164-.628-.134-.835s.142-.389.365-.752l.203-.33c.786-1.276 1.179-1.914.924-2.426c-.254-.51-.987-.557-2.454-.648l-.379-.024c-.417-.026-.625-.039-.806-.135c-.18-.096-.314-.264-.58-.6m-5.869 9.324C6.698 14.37 4.919 16.024 4.248 18c-.752-4.707.292-7.747 1.965-9.637c.144.295.332.539.5.73c.35.396.852.82 1.362 1.251l.367.31l.17.145c.005.064.01.14.015.237l.03.485c.04.655.08 1.294.178 1.805"/>
+            </svg>
           </div>
-          <div class="card-name">Guiarme</div>
-          <p class="card-claim">No sé qué ritmo elegir.</p>
-          <p class="card-detail">Quiero correr bien, regular el esfuerzo y llegar con energía. Tres preguntas y armamos tu plan.</p>
-          <button class="card-cta">
-            Armar mi plan
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </button>
+          <div class="mode-card-body">
+            <p class="card-name">Guiarme</p>
+            <p class="card-claim">No sé qué ritmo elegir.</p>
+            <p class="card-detail">Quiero correr bien, regular el esfuerzo y llegar con energía. Tres preguntas y armamos tu plan.</p>
+            <button class="mode-card-cta">
+              Armar mi plan
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
         </div>
 
         <!-- B: RITMO OBJETIVO -->
-        <div class="mode-card b-card" onclick="startRitmo()">
-          <div class="card-tag">
-            Marca objetivo
-            <div class="card-tag-line"></div>
+        <div class="mode-card-wrap b-wrap" onclick="startRitmo()">
+          <div class="mode-card-header">
+            <p>Marca objetivo</p>
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
+            </svg>
           </div>
-          <div class="card-name">Ritmo Objetivo</div>
-          <p class="card-claim">Tengo una marca en mente.</p>
-          <p class="card-detail">Calculá parciales km a km según distancia, desnivel real del recorrido y ritmo esperado.</p>
-          <button class="card-cta">
-            Calcular estrategia
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </button>
+          <div class="mode-card-body">
+            <p class="card-name">Ritmo Objetivo</p>
+            <p class="card-claim">Tengo una marca en mente.</p>
+            <p class="card-detail">Calculá parciales km a km según distancia, desnivel real del recorrido y ritmo esperado.</p>
+            <button class="mode-card-cta">
+              Calcular estrategia
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
         </div>
 
       </div>
@@ -1093,9 +1176,20 @@
 
       <div>
         <span class="field-label">Distancia</span>
-        <div class="dist-grid">
-          <button id="btn-5k" class="dist-btn" onclick="selectDistance('5k')">5K</button>
-          <button id="btn-10k" class="dist-btn" onclick="selectDistance('10k')">10K</button>
+        <div class="glass-radio-dist">
+          <input checked id="dist-5k" name="dist-plan" type="radio" onchange="selectDistance('5k')">
+          <label for="dist-5k">
+            <span class="glass-dist-indicator"><span class="glass-dist-check">✓</span></span>
+            <span>5K</span>
+          </label>
+
+          <input id="dist-10k" name="dist-plan" type="radio" onchange="selectDistance('10k')">
+          <label for="dist-10k">
+            <span class="glass-dist-indicator"><span class="glass-dist-check">✓</span></span>
+            <span>10K</span>
+          </label>
+
+          <div class="glass-glider-dist"></div>
         </div>
 
         <span class="field-label">Tiempo objetivo</span>
