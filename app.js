@@ -245,11 +245,18 @@ function resultsBack() {
 
 // ── Ritmo Objetivo: calculate ────────────────────────────────────
 async function calculate() {
-  const timeStr = document.getElementById('time-input').value;
-  const targetSecs = parseTime(timeStr);
+  const h = parseInt(document.getElementById('time-h').value) || 0;
+  const m = parseInt(document.getElementById('time-m').value);
+  const s = parseInt(document.getElementById('time-s').value) || 0;
+
+  if (isNaN(m) || m < 0 || m > 59 || s < 0 || s > 59 || h < 0) {
+    showError('Completá minutos y segundos correctamente (0–59)');
+    return;
+  }
+  const targetSecs = h * 3600 + m * 60 + s;
 
   if (!targetSecs || targetSecs < 60) {
-    showError('Ingresá el tiempo en formato MM:SS o H:MM:SS');
+    showError('Ingresá un tiempo válido (mínimo 1 minuto)');
     return;
   }
 
@@ -660,23 +667,9 @@ async function renderMapKmList() {
 document.addEventListener('DOMContentLoaded', () => {
   selectDistance('5k');
 
-  const timeInput = document.getElementById('time-input');
-
-  timeInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') calculate();
-  });
-
-  timeInput.addEventListener('input', function () {
-    this.value = this.value.replace(/[^0-9:]/g, '');
-  });
-
-  timeInput.addEventListener('blur', function () {
-    let v = this.value.replace(/[^0-9:]/g, '');
-    if (!v.includes(':')) {
-      if (v.length === 6)      v = v.slice(0, 2) + ':' + v.slice(2, 4) + ':' + v.slice(4);
-      else if (v.length === 5) v = v.slice(0, 1) + ':' + v.slice(1, 3) + ':' + v.slice(3);
-      else if (v.length === 4) v = v.slice(0, 2) + ':' + v.slice(2);
-    }
-    this.value = v;
+  ['time-h', 'time-m', 'time-s'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', e => {
+      if (e.key === 'Enter') calculate();
+    });
   });
 });

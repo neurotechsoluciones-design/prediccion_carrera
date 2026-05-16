@@ -575,24 +575,53 @@
     }
 
 
+    .time-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .time-field-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .time-field-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .time-field-label span {
+      font-size: 9px;
+      opacity: 0.6;
+      font-weight: 400;
+    }
     .time-input {
       width: 100%;
       background: var(--bg2);
       border: 1px solid rgba(255,255,255,0.1);
       border-radius: 14px;
-      padding: 18px 20px;
+      padding: 16px 8px;
       font-family: 'Orbitron', sans-serif;
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       color: white;
       text-align: center;
       caret-color: var(--green);
       letter-spacing: 0.05em;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, box-shadow 0.2s;
       -webkit-appearance: none;
-      margin-bottom: 8px;
+      -moz-appearance: textfield;
+      appearance: textfield;
     }
-    .time-input::placeholder { color: rgba(255,255,255,0.15); }
+    .time-input::-webkit-outer-spin-button,
+    .time-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .time-input::placeholder { color: rgba(255,255,255,0.12); }
     .time-input:focus { outline: none; border-color: var(--green); box-shadow: 0 0 16px rgba(154,255,95,0.1); }
+    .time-input.optional { border-color: rgba(255,255,255,0.06); color: var(--text-secondary); }
+    .time-input.optional:focus { border-color: rgba(154,255,95,0.4); color: white; }
     .time-hint { font-size: 11px; color: var(--muted); text-align: center; margin-bottom: 24px; }
 
     .error-msg { color: #F87171; font-size: 0.8rem; text-align: center; min-height: 20px; }
@@ -1193,8 +1222,20 @@
         </div>
 
         <span class="field-label">Tiempo objetivo</span>
-        <input id="time-input" class="time-input" type="text" inputmode="decimal" placeholder="25:00" autocomplete="off" spellcheck="false">
-        <p class="time-hint">MM:SS &nbsp;·&nbsp; H:MM:SS</p>
+        <div class="time-fields">
+          <div class="time-field-wrap">
+            <div class="time-field-label">Horas <span>(opcional)</span></div>
+            <input id="time-h" class="time-input optional" type="number" inputmode="numeric" min="0" max="9" placeholder="0" autocomplete="off">
+          </div>
+          <div class="time-field-wrap">
+            <div class="time-field-label">Minutos</div>
+            <input id="time-m" class="time-input" type="number" inputmode="numeric" min="0" max="59" placeholder="25" autocomplete="off">
+          </div>
+          <div class="time-field-wrap">
+            <div class="time-field-label">Segundos</div>
+            <input id="time-s" class="time-input" type="number" inputmode="numeric" min="0" max="59" placeholder="00" autocomplete="off">
+          </div>
+        </div>
 
         <button id="btn-calc" class="btn-neon" onclick="calculate()">Calcular estrategia</button>
         <p id="error-msg" class="error-msg hidden" style="margin-top:12px"></p>
